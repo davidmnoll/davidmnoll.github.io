@@ -18,7 +18,7 @@ export default defineComponent({
   data() {
     return {
       paths: {
-        resume: "public/pdf/DavidNoll-Resume.pdf",
+        resume: "pdf/DavidNoll-Resume.pdf",
       },
       links: [
         // {
