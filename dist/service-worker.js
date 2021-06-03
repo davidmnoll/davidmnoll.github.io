@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.8c7b369853f009ca97cbd0c59c83556c.js"
+  "/public/precache-manifest.8b52983a04d7df106abb12192539537f.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "davidmnoll"});
