@@ -1,6 +1,4 @@
 
-# David Noll
-
 Fullstack Devleoper
 
 [Resume](./pdf/DavidNoll-Resume.pdf)
