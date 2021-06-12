@@ -2,4 +2,3 @@ remote_theme: mmistakes/minimal-mistakes
 minimal_mistakes_skin: dark
 plugins:
   - jekyll-include-cache
-layout: single
