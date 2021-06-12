@@ -5,3 +5,4 @@ plugins:
 layout: single
 sidebar:
   nav: "docs"
+repository: davidmnoll/davidmnoll.github.io
