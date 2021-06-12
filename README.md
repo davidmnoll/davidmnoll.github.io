@@ -1,6 +1,5 @@
 
 # David Noll
-===
 
 Fullstack Devleoper
 
