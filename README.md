@@ -1,3 +1,8 @@
+---
+layout: single
+sidebar:
+  nav: "docs"
+---
 
 Fullstack Devleoper
 
