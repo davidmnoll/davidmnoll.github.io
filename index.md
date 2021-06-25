@@ -46,7 +46,7 @@ Soft:
 
 Coursera Courses
 ---
-[Design Patterns - Java](./assets/pdf/design_patterns.pdf)
-[Software Architecture - Java](./assets/pdf/soft_arch.pdf)
-[Functional Programming Principles - Scala](./assets/pdf/func_prog_principles.pdf)
-[Functional Programming Design - Scala](./assets/pdf/func_prog_design.pdf)
+- [Design Patterns - Java](./assets/pdf/design_patterns.pdf)
+- [Software Architecture - Java](./assets/pdf/soft_arch.pdf)
+- [Functional Programming Principles - Scala](./assets/pdf/func_prog_principles.pdf)
+- [Functional Programming Design - Scala](./assets/pdf/func_prog_design.pdf)
