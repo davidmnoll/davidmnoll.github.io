@@ -1,6 +1,6 @@
 ---
 layout: single
-toc: false
+toc: true
 author_profile: true
 read_time: false
 title: "David M Noll"
