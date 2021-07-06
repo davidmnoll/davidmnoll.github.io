@@ -1,7 +1,7 @@
 
 Fullstack Devleoper
 
-[Resume](./pdf/DavidNoll-Resume.pdf)
+[Resume](./assets/pdf/DavidNoll-Resume.pdf)
 
 Links:
 ---
