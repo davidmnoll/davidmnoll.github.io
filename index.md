@@ -19,11 +19,11 @@ header:
 
 Intro
 ---
-I'm a full stack developer.  After growing up in the 90's and early 2000's learning the HTML, JavaScript, and Java, I became interested in cognitive science & linguistics.  Eventually I came back around into programming through IT and WordPress development. 
+I'm a full stack developer.  After growing up in the 90's and early 2000's learning HTML, JavaScript, and Java, I became interested in cognitive science & linguistics.  Eventually I came back around into programming through IT and WordPress development. 
 
 Since then I've been working on expanding my toolkit and honing my skills with proper design & architecture.
 
-Outside of work, my intersts are statistics, physics, and cognitive science, as well as hiking and exploring nature, going to the gym, and sci fi shows.  
+Outside of work, my interests are statistics, physics, and cognitive science, as well as hiking and exploring nature, going to the gym, and sci fi shows.  
 
 Skills
 ---
@@ -40,7 +40,7 @@ Tools/Other:
 - Some: Postgresql, Docker, AWS, Selenium
 
 Soft:
-- Troublshooting, Software Design
+- Troubleshooting, Software Design
 - Some: Agile, Test Driven Development
 
 
