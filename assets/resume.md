@@ -22,7 +22,7 @@ Technology Skills
 Experience
 ---
 
-##### Lead Full Stack Engineer, Dojo AI New York, NY (Remote) 2021-2022
+##### Lead Full Stack Engineer, Dojo AI New York, NY (Remote) 2021-2023
 - Tech lead for all major features, worked with business manager to lead agile/scrum process
 - Coordinated with contractors, customers, to scope & design solutions
 - Implemented CI/CD pipeline using Heroku CI, GitHub workflows, Heroku pipelines, etc.
