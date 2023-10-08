@@ -4,6 +4,9 @@ create-pdf-resume:
 run:
 	trunk serve
 
+install:
+  cargo install .
+
 build:
 	trunk build --verbose
 
