@@ -5,9 +5,12 @@ run:
 	cargo build
 	trunk serve
 
+install: 
+	rustup target add wasm32-unknown-unknown
 
 build:
 	cargo build
+	ls ~/.cargo/bin
 	trunk build --verbose
 
 test: 

@@ -31,10 +31,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: jetli/trunk-action@v0.4.0
+    - name: Install
+      run: make install
+    # - uses: jetli/trunk-action@v0.4.0
+    #   with:
+    #   # Optional version of trunk to install(eg. 'v0.16.0', 'latest')
+    #     version: 'latest'
+    - name: Setup | Rust
+      uses: ATiltedTree/setup-rust@v1
       with:
-      # Optional version of trunk to install(eg. 'v0.16.0', 'latest')
-        version: 'latest'
+        rust-version: stable
+        components: clippy
     - name: Build
       run: make build
     - name: Setup Pages
