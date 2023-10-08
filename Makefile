@@ -5,7 +5,7 @@ run:
 	cargo build
 	trunk serve
 
-install: 
+install-target: 
 	rustup target add wasm32-unknown-unknown
 
 build:

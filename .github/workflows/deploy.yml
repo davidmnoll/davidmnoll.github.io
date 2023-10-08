@@ -31,12 +31,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install
-      run: make install
-    # - uses: jetli/trunk-action@v0.4.0
-    #   with:
-    #   # Optional version of trunk to install(eg. 'v0.16.0', 'latest')
-    #     version: 'latest'
+    - uses: jetli/trunk-action@v0.4.0
+      with:
+      # Optional version of trunk to install(eg. 'v0.16.0', 'latest')
+        version: 'latest'
     - name: Setup | Rust
       uses: ATiltedTree/setup-rust@v1
       with:
