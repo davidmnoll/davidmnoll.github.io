@@ -2,12 +2,12 @@ create-pdf-resume:
 	echo "Not implemented"
 
 run:
+	cargo build
 	trunk serve
 
-install:
-  cargo install .
 
 build:
+	cargo build
 	trunk build --verbose
 
 test: 
