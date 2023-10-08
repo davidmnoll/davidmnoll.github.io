@@ -11,4 +11,5 @@ console_log = "1.0.0"
 log = "0.4.20"
 # sycamore = { git = "https://github.com/sycamore-rs/sycamore", rev = "fc640d313e66f9a6af422fae44f4f72fa86280cc" }
 sycamore = "0.9.0-beta.1"
+trunk = "0.17.5"
 

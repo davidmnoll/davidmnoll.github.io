@@ -5,7 +5,7 @@ run:
 	trunk serve
 
 build:
-	trunk build
+	trunk build --verbose
 
 test: 
-	cargo test --target wasm32-unknown-unknown
+	cargo test --target wasm32-unknown-unknown --verbose
