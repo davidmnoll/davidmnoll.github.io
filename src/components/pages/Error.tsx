@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from 'react'
+// import React, { useEffect, useRef } from 'react'
 import { Link } from "react-router-dom";
-import Section from '../section'
+// import Section from '../section'
 
 import { buttonVariants } from "@/components/ui/button"
 
-import {
-  Button,
-} from "@/components/ui/button"
+// import {
+//   Button,
+// } from "@/components/ui/button"
 
 export default function ErrorPage() {
     

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'   
+import { useRef, useEffect } from 'react'   
 
 const Background1 = () => {
   //http://creativejs.com/2011/12/day-3-play-with-your-pixels/
@@ -33,11 +33,11 @@ const animateCanvas = (canvas: HTMLCanvasElement) => {
   }
   var imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
 
-  function getPixel(imagedata: any, x: number, y: number) {
-    var i = (y * imagedata.width + x) * 4;
+  // function getPixel(imagedata: any, x: number, y: number) {
+  //   var i = (y * imagedata.width + x) * 4;
 
-    return {r: imagedata.data[i], g: imagedata.data[i+1], b: imagedata.data[i+2], a: imagedata.data[i+3]};
-  }
+  //   return {r: imagedata.data[i], g: imagedata.data[i+1], b: imagedata.data[i+2], a: imagedata.data[i+3]};
+  // }
   function setPixel(imagedata: any, x: number, y: number, r: number, g: number, b: number, a: number) {
     var i = (y * imagedata.width + x) * 4;
     imagedata.data[i++] = r;

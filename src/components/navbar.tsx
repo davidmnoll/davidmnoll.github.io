@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetOverlay,
+  // SheetDescription,
+  // SheetOverlay,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -49,6 +49,14 @@ export default function NavBar() {
           <SheetHeader>
             <SheetTitle>Where to?</SheetTitle>
           </SheetHeader>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            boxSizing: 'border-box',
+            paddingBottom: "2rem",
+            height: "100%",
+          }}>
           <p>
             <Button variant="ghost" className="hover:bg-whispyblue/5" >
               <NavLink to="/" reloadDocument className={classFunc} >Home <HomeIcon className="inline" /></NavLink>
@@ -74,6 +82,7 @@ export default function NavBar() {
               <NavLink to="/about" reloadDocument className={classFunc} >About <PersonIcon className="inline" /></NavLink>
             </Button>
           </p>
+          </div>
         </SheetContent>
       </Sheet>
 

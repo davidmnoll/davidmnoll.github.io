@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+// import React, { useEffect, useRef } from 'react'
 
 import Section from '../section'
 
-import Contact from "@/components/sections/Contact"
+// import Contact from "@/components/sections/Contact"
 import About from "@/components/sections/About"
-import Work from "@/components/sections/Work"
+// import Work from "@/components/sections/Work"
 import Skills from "@/components/sections/Skills"
 
 export default function Home({ position }: {position: string}) {

@@ -100,7 +100,7 @@ export default function Home() {
         I am a generalist full stack engineer with experience leading engineering developments in early-stage startup environments.  
         <br />
         <br />
-        Computer science interests are: machine learning, decentralized systems, combinator & rewriting systems
+        Computer science interests are: workflows, decentralized systems, functional programming, machine learning, combinator & rewriting systems
         <br />
         <br />
         My other academic interests include: information theory, cognitive science, math, physics, history, and statistics
