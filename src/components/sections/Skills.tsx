@@ -152,7 +152,7 @@ export default function Skills() {
               <Skill name="Blender" value={50} />
               <Skill name="Ethereum Ecosystem" value={60} />
               <Skill name="Android" value={50} />
-              <Skill name="Security" value={80} />
+              <Skill name="Security" value={70} />
             </div>
           </AccordionContent>
         </AccordionItem>      
