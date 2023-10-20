@@ -54,7 +54,7 @@ function App( { children } : { children?: React.ReactNode }) {
         width: '100%',
         height: '50px',
         position: 'fixed',
-        zIndex: 100,
+        zIndex: 3,
       }}>
         <NavBar />
       </div>
