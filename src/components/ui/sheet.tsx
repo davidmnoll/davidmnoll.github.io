@@ -14,10 +14,14 @@ const SheetClose = SheetPrimitive.Close
 const SheetPortal = ({
   className,
   ...props
-}: SheetPrimitive.DialogPortalProps & {className?: string}) => (
-  /* tslint:disable-next-line */
-  <SheetPrimitive.Portal className={cn(className)} {...props} />
-)
+}: SheetPrimitive.DialogPortalProps & {className?: string}) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Component = SheetPrimitive.Portal as unknown as any
+  Component.displayName = SheetPrimitive.Portal.displayName
+  return (
+    <Component className={cn(className)} {...props} />
+  )
+}
 SheetPortal.displayName = SheetPrimitive.Portal.displayName
 
 const SheetOverlay = React.forwardRef<
