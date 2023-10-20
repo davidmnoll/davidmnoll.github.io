@@ -75,7 +75,7 @@ export default function NavBar() {
                 <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={resumeUrl}> Resume <FileTextIcon className='inline' /></a>
               </Button>
             </p>
-            <p>
+            {/* <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
                 <NavLink to="/skills" reloadDocument className={classFunc} >Skills <MagicWandIcon className="inline" /></NavLink>
               </Button>
@@ -84,7 +84,7 @@ export default function NavBar() {
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
                 <NavLink to="/about" reloadDocument className={classFunc} >About <PersonIcon className="inline" /></NavLink>
               </Button>
-            </p>
+            </p> */}
           </div>
         </SheetContent>
       </Sheet>
