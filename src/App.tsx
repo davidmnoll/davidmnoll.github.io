@@ -38,6 +38,9 @@ function App( { children } : { children?: React.ReactNode }) {
     }
   };
 
+
+  console.log('App.tsx', document.body.clientHeight, window.innerHeight )
+
   return (
     <div style={{
       position: 'relative',
@@ -45,17 +48,19 @@ function App( { children } : { children?: React.ReactNode }) {
       width: '100%',
       padding: '0',
       margin: '0',
+      minHeight: '100vh', // '100%
     }}>
       <div style={{
         width: '100%',
         height: '50px',
+        position: 'fixed',
+        zIndex: 100,
       }}>
         <NavBar />
       </div>
 
       <div className="main" style={{
         position: 'relative',
-        minHeight: '100vh', // '100%
         width: '100%',
         paddingTop: '50px',
         paddingBottom: '50px',
@@ -72,7 +77,9 @@ function App( { children } : { children?: React.ReactNode }) {
         padding: '0 6vw'
 
       }}>
-        <Button variant="link" onClick={() =>{ 
+        <div style={{
+          display: document.body.clientHeight > window.innerHeight ? 'block' : 'none',
+        }}><Button variant="link" onClick={() =>{ 
           window.scrollTo({ 
             top: 0,  
             behavior: 'smooth'
@@ -80,7 +87,7 @@ function App( { children } : { children?: React.ReactNode }) {
               in place of 'smooth' */
           }); 
         }} className='text-popover-foreground'>
-        <ChevronUpIcon /> scroll to top</Button>
+        <ChevronUpIcon /> scroll to top</Button></div>
       </div>
       <ParticlesBg type="cobweb" bg={true} config={config} color="#99FFCC" />
       <Background1 />
