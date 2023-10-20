@@ -1,5 +1,6 @@
 
 .vite
+_site
 # Logs
 logs
 *.log
