@@ -21,8 +21,8 @@ import resumeUrl from '@/../assets/pdf/DavidNoll-Resume.pdf'
 import {
   EnvelopeClosedIcon,
   FileTextIcon,
-  PersonIcon,
-  MagicWandIcon,
+  // PersonIcon,
+  // MagicWandIcon,
   HomeIcon
 } from '@radix-ui/react-icons'
 
