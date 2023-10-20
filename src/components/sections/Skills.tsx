@@ -81,7 +81,7 @@ export default function Skills() {
               <Skill name="Canvas / Animation" value={60} />
               <Skill name="Vue" value={50} />
               <Skill name="Visual Design" value={40} />
-              <Skill name="WASM" value={80} />
+              <Skill name="WASM" value={30} />
 
             </div>
           </AccordionContent>
