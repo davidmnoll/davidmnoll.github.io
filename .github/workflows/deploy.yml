@@ -1,4 +1,4 @@
-name: Rust
+name: React deploy
 
 on:
   push:
@@ -19,37 +19,40 @@ concurrency:
   cancel-in-progress: true
 
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: jetli/trunk-action@v0.4.0
-      with:
-      # Optional version of trunk to install(eg. 'v0.16.0', 'latest')
-        version: 'latest'
-    - name: Setup | Rust
-      uses: ATiltedTree/setup-rust@v1
-      with:
-        rust-version: stable
-        components: clippy
-    - name: Build
-      run: make build
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
-      with:
-        # Upload entire repository
-        path: './dist/'
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+    - name: Checkout source code
+      uses: actions/checkout@v3
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # or another version if preferred
+
+    - name: Install dependencies
+      run: make install
+
+    - name: Build app
+      run: make build
+
+    - name: Upload GitHub Pages artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: github-pages
+        path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+
+    steps:
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
