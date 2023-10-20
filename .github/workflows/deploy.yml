@@ -41,13 +41,21 @@ jobs:
     - name: Build app
       run: make build
 
-    - name: Upload GitHub Pages artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: github-pages
-        path: dist
+    # - name: Upload GitHub Pages artifact
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: github-pages
+    #     path: dist
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
 
   deploy:
+
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+
     needs: build
     runs-on: ubuntu-latest
 
