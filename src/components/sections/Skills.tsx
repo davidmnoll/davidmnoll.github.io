@@ -1,14 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 
 import { cn } from "@/lib/utils"
 import { Slider } from "@/components/ui/slider"
-import Section from '../section'
-
-import { buttonVariants } from "@/components/ui/button"
-
-import {
-  EnvelopeClosedIcon
-} from '@radix-ui/react-icons'
 
 import {
   Accordion,

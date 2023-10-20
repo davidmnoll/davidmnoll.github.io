@@ -1,8 +1,3 @@
-import React, { useEffect, useRef } from 'react'
-
-import Section from '../section'
-
-import { buttonVariants } from "@/components/ui/button"
 import profileImage from '@/../assets/img/profile.jpeg'
 import resumeUrl from '@/../assets/pdf/DavidNoll-Resume.pdf'
 
@@ -12,7 +7,6 @@ import {
   GitHubLogoIcon,
   LinkedInLogoIcon
 } from '@radix-ui/react-icons'
-import { profile } from 'console'
 
 
 export default function Home() {
