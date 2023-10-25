@@ -89,7 +89,7 @@ function App( { children } : { children?: React.ReactNode }) {
         }} className='text-popover-foreground'>
         <ChevronUpIcon /> scroll to top</Button></div>
       </div>
-      <ParticlesBg type="cobweb" bg={true} config={config} color="#99FFCC" />
+      {/* <ParticlesBg type="cobweb" bg={true} config={config} color="#99FFCC" /> */}
       <Background1 />
     </div>
   )
