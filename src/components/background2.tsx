@@ -77,10 +77,10 @@ const Background2 = () => {
         if(Math.random() * 700  < 1){
         // if(true){
           setPixel(imagedata, x, y, 
-              Math.floor((Math.random() * 55 ) + 200 ), 
+              Math.floor((Math.random() * 155 ) + 100 ), 
               Math.floor((Math.random() * 55)  ),
-              Math.floor((Math.random() * 55) ) + 50 , 
-              Math.floor((Math.random() * 15) + 200)
+              Math.floor((Math.random() * 100) )  , 
+              Math.floor((Math.random() * 55) + 200)
             );
         } else {
           setPixel(imagedata, x, y, 0, 0, 0 , 0);
