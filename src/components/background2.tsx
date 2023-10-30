@@ -1,10 +1,10 @@
-import { useRef, useEffect, useState } from 'react'   
+
+import { useRef, useState, useEffect } from 'react'   
 
 import { useIsScrolling } from '@/components/use-scroll'
 
-const Background1 = () => {
+const Background2 = () => {
   //http://creativejs.com/2011/12/day-3-play-with-your-pixels/
-
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -16,7 +16,7 @@ const Background1 = () => {
   } = useIsScrolling();
     
   useEffect(() => {
-    // console.log('isScrolling', isScrolling)
+    console.log('isScrolling', isScrolling)
     if (isScrolling){
       setIteration(0)
     }
@@ -53,20 +53,38 @@ const Background1 = () => {
       throw new Error('no imagedata')
     }
 
+    if (iteration >= numIterations){
+      context.clearRect(0, 0, imagedata.width, imagedata.height);
+      context.beginPath();
+      context.fillStyle = "rgba(0, 0, 0, 0)";
+      context.fillRect(0, 0, imagedata.width, imagedata.height);
+    }
+
     const setPixel = (imagedata: ImageData, x: number, y: number, r: number, g: number, b: number, a: number) => {
       let i = (y * imagedata.width + x) * 4;
       imagedata.data[i++] = r;
       imagedata.data[i++] = g;
       imagedata.data[i++] = b;
       imagedata.data[i] = a;
-  }
-  
-
+    }
+    
 
     for( let y = 0 ; y < imagedata.height; y++ ) {
       for( let x = 0 ; x < imagedata.width; x++ ) {
         // set the colour randomly
-        setPixel(imagedata, x, y, Math.floor((Math.random() * 0 ) + 35), Math.floor((Math.random() * 5) + 70 ),Math.floor((Math.random() * 1) + 59), Math.floor((Math.random() * 0) + 255));
+        // const heightFrac = 10;
+        // const yScrollFraction = 1
+        if(Math.random() * 700  < 1){
+        // if(true){
+          setPixel(imagedata, x, y, 
+              Math.floor((Math.random() * 55 ) + 200 ), 
+              Math.floor((Math.random() * 55)  ),
+              Math.floor((Math.random() * 55) ) + 50 , 
+              Math.floor((Math.random() * 15) + 200)
+            );
+        } else {
+          setPixel(imagedata, x, y, 0, 0, 0 , 0);
+        }
       }
     }
     context.putImageData(imagedata, 0, 0);
@@ -77,20 +95,21 @@ const Background1 = () => {
   }, [iteration])
 
 
+  
 
-
-
-  return <canvas ref={canvasRef} id="canvas" width="500" height="3" style={{
+  return <canvas ref={canvasRef} id="canvas" width={Math.floor(window.innerWidth / 54)} height="300" style={{
     'position': 'absolute',
     'top': '0',
     'left': '0',
-    'zIndex': '-1',
-    'opacity': '.7',
-    'backgroundColor': '#333',
+    'zIndex': '-2',
+    'opacity': '1',
+    'backgroundColor': 'transparent',
     'width': "100%",
     'height': "100%",
   }}></canvas>
 
 }
 
-export default Background1
+
+
+export default Background2

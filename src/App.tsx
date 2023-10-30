@@ -5,6 +5,7 @@ import NavBar from "@/components/navbar";
 
 // import ParticlesBg from 'particles-bg'
 import Background1 from '@/components/background1'
+import Background2 from '@/components/background2'
 
 import { Button } from "@/components/ui/button"
 
@@ -66,6 +67,7 @@ function App( { children } : { children?: React.ReactNode }) {
         <ChevronUpIcon /> scroll to top</Button></div>
       </div>
       {/* <ParticlesBg type="cobweb" bg={true} config={config} color="#99FFCC" /> */}
+      <Background2 />
       <Background1 />
     </div>
   )
