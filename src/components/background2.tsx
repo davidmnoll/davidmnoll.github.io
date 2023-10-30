@@ -97,7 +97,7 @@ const Background2 = () => {
 
   
 
-  return <canvas ref={canvasRef} id="canvas" width={Math.floor(window.innerWidth / 150)} height="300" style={{
+  return <canvas ref={canvasRef} id="canvas" width={Math.ceil(window.innerWidth / 150)} height="300" style={{
   // return <canvas ref={canvasRef} id="canvas" width={12} height="300" style={{
       'position': 'absolute',
     'top': '0',
