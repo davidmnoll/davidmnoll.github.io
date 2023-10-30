@@ -25,7 +25,7 @@ const Background2 = () => {
 
   useEffect(() => {
 
-    const numIterations = 21
+    const numIterations = 27
     // console.log('iteration', iteration, numIterations)
 
     if (iteration < 0){
@@ -74,13 +74,13 @@ const Background2 = () => {
         // set the colour randomly
         // const heightFrac = 10;
         // const yScrollFraction = 1
-        if(Math.random() * 700  < 1){
+        if(Math.random() * 30 * iteration  < 1){
         // if(true){
           setPixel(imagedata, x, y, 
               Math.floor((Math.random() * 155 ) + 100 ), 
               Math.floor((Math.random() * 55)  ),
               Math.floor((Math.random() * 100) )  , 
-              Math.floor((Math.random() * 55) + 200)
+              Math.floor((Math.random() * 15) + 200)
             );
         } else {
           setPixel(imagedata, x, y, 0, 0, 0 , 0);
@@ -97,8 +97,9 @@ const Background2 = () => {
 
   
 
-  return <canvas ref={canvasRef} id="canvas" width={Math.floor(window.innerWidth / 54)} height="300" style={{
-    'position': 'absolute',
+  return <canvas ref={canvasRef} id="canvas" width={Math.floor(window.innerWidth / 150)} height="300" style={{
+  // return <canvas ref={canvasRef} id="canvas" width={12} height="300" style={{
+      'position': 'absolute',
     'top': '0',
     'left': '0',
     'zIndex': '-2',
