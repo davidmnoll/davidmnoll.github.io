@@ -33,7 +33,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16' # or another version if preferred
+        node-version: '20' # or another version if preferred
 
     - name: Install dependencies
       run: make install

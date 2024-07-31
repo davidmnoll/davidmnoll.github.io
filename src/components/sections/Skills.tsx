@@ -98,7 +98,6 @@ export default function Skills() {
               <Skill name="Mongo" value={40} />
               <Skill name="SQL Alchemy" value={70} />
               <Skill name="Prisma" value={80} />
-
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -113,7 +112,7 @@ export default function Skills() {
               <Skill name="Linux (Ubuntu)" value={80} />
               <Skill name="Docker" value={80} />
               <Skill name="Kubernetes" value={30} />
-              <Skill name="Terraform" value={30} />
+              <Skill name="Terraform" value={40} />
               <Skill name="Github Actns, Gitlab CI/CD" value={80} />
               <Skill name="Cypress" value={90} />
               <Skill name="Heroku" value={80} />
@@ -126,7 +125,41 @@ export default function Skills() {
             </div>
           </AccordionContent>
         </AccordionItem>      
+
+
         <AccordionItem value="item-5" className="border-whispyblue/10">
+          <AccordionTrigger>Domain Specific</AccordionTrigger>
+          <AccordionContent>
+            <div style={{
+                padding: '1rem 0',
+              }}>
+              <Skill name="Audio/Video" value={40} />
+              <Skill name="Blender" value={50} />
+              <Skill name="Ethereum Ecosystem" value={60} />
+              <Skill name="Android" value={50} />
+              <Skill name="Security" value={70} />
+              <Skill name="CUDA" value={20} />
+            </div>
+          </AccordionContent>
+        </AccordionItem>      
+
+        <AccordionItem value="item-6" className="border-whispyblue/10">
+          <AccordionTrigger>Interests</AccordionTrigger>
+          <AccordionContent>
+            <div style={{
+                padding: '1rem 0',
+              }}>
+              <Skill name="Machine Learning" value={30} />
+              <Skill name="Data Science" value={30} />
+              <Skill name="Programming Languages" value={30} />
+              <Skill name="Blockchain" value={60} />
+              {/* <Skill name="Decentralized Architecture" value={50} /> */}
+              <Skill name="Distributed Systems" value={10} />
+            </div>
+          </AccordionContent>
+        </AccordionItem>    
+
+        <AccordionItem value="item-7" className="border-whispyblue/10">
           <AccordionTrigger>Soft</AccordionTrigger>
           <AccordionContent>
             <div style={{
@@ -142,35 +175,6 @@ export default function Skills() {
           </AccordionContent>
         </AccordionItem>      
 
-        <AccordionItem value="item-6" className="border-whispyblue/10">
-          <AccordionTrigger>Domain Specific</AccordionTrigger>
-          <AccordionContent>
-            <div style={{
-                padding: '1rem 0',
-              }}>
-              <Skill name="Audio/Video" value={40} />
-              <Skill name="Blender" value={50} />
-              <Skill name="Ethereum Ecosystem" value={60} />
-              <Skill name="Android" value={50} />
-              <Skill name="Security" value={70} />
-            </div>
-          </AccordionContent>
-        </AccordionItem>      
-
-        <AccordionItem value="item-7" className="border-whispyblue/10">
-          <AccordionTrigger>Interests</AccordionTrigger>
-          <AccordionContent>
-            <div style={{
-                padding: '1rem 0',
-              }}>
-              <Skill name="Machine Learning" value={30} />
-              <Skill name="Programming Languages" value={30} />
-              <Skill name="Blockchain" value={60} />
-              <Skill name="Decentralized Architecture" value={50} />
-              <Skill name="Distributed Systems" value={10} />
-            </div>
-          </AccordionContent>
-        </AccordionItem>    
       </Accordion>
 
     </div>

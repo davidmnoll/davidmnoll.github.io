@@ -94,7 +94,10 @@ export default function Home() {
         I am a generalist full stack engineer with experience leading engineering developments in early-stage startup environments.  
         <br />
         <br />
-        Computer science interests are: workflows, decentralized systems, functional programming, machine learning, combinator & graph rewriting systems
+        My experience lies mostly in full stack development for web applications.  See the "skills" section for more details.
+        <br />
+        <br />
+        I'm interested in learning more about all kinds of subjects including workflows, decentralized systems, functional programming, machine learning, combinator & graph rewriting systems
         <br />
         <br />
         My other academic interests include: information theory, cognitive science, math, physics, history, and statistics
@@ -130,6 +133,14 @@ export default function Home() {
             fontSize: '1rem',
           }}>Fosforescent</span>: (work in progress) a platform & marketplace for collaborative workflows */}
           <br />
+          <div style={{
+            padding: '.5rem 0',
+          }}>
+            <span style={{
+              fontSize: '1rem',
+              display: 'inline-block',
+            }}><a href="https://github.com/davidmnoll/netcode">Netcode:</a></span> (work in progress) a neuron-wise neural net library & playground
+          </div>
           <div style={{
             padding: '.5rem 0',
           }}>
