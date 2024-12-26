@@ -154,7 +154,7 @@ export default function Skills() {
               <Skill name="Programming Languages" value={30} />
               <Skill name="Blockchain" value={60} />
               {/* <Skill name="Decentralized Architecture" value={50} /> */}
-              <Skill name="Distributed Systems" value={10} />
+              {/* <Skill name="Distributed Systems" value={10} /> */}
             </div>
           </AccordionContent>
         </AccordionItem>    
