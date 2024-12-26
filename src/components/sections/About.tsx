@@ -91,14 +91,14 @@ export default function Home() {
         margin: '1rem 0',
         fontSize: '.8rem',
       }}  className="border-whispyblue/10 border-b border-t">
-        I am a generalist full stack engineer with experience leading engineering developments in early-stage startup environments.  
+        I am a full stack engineer with experience leading engineering developments in startup environments.  
         <br />
         <br />
         My experience lies mostly in full stack development for web applications.  See the "skills" section for more details.
         <br />
-        <br />
+        {/* <br />
         I'm interested in learning more about all kinds of subjects including workflows, decentralized systems, functional programming, machine learning, combinator & graph rewriting systems
-        <br />
+        <br /> */}
         <br />
         My other academic interests include: information theory, cognitive science, math, physics, history, and statistics
         <br />
