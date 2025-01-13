@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -26,19 +26,18 @@ import {
   FileTextIcon,
   // PersonIcon,
   // MagicWandIcon,
-  HomeIcon
+  // HomeIcon
 } from '@radix-ui/react-icons'
-import { GithubIcon } from "lucide-react";
 
 
 export default function NavBar() {
 
-  const classFunc = ({ isActive, isPending }: {isActive: boolean, isPending: boolean}) =>
-    isActive
-      ? "active"
-      : isPending
-      ? "pending"
-      : ""
+  // const classFunc = ({ isActive, isPending }: {isActive: boolean, isPending: boolean}) =>
+  //   isActive
+  //     ? "active"
+  //     : isPending
+  //     ? "pending"
+  //     : ""
 
   return (
     <div style={{

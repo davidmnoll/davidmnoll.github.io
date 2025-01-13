@@ -5,7 +5,7 @@ import NavBar from "@/components/navbar";
 
 // import ParticlesBg from 'particles-bg'
 import Background1 from '@/components/background1'
-import Background2 from '@/components/background2'
+// import Background2 from '@/components/background2'
 
 import { Button } from "@/components/ui/button"
 
