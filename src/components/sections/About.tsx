@@ -91,19 +91,19 @@ export default function Home() {
         margin: '1rem 0',
         fontSize: '.8rem',
       }}  className="border-whispyblue/10 border-b border-t">
-        I am a full stack engineer with experience leading engineering developments in startup environments.  
+        I am a full stack engineer with experience leading engineering developments in startup environments.  Most recently, I have been working to build <a href="https://info.fosforescent.com" className="underline">Fosforescent</a>, a visual dataflow language for task management and group coordination.
         <br />
         <br />
-        My experience lies mostly in full stack development for web applications.  See the "skills" section for more details.
+        My experience lies mostly in full stack development for web applications.  
         <br />
         {/* <br />
         I'm interested in learning more about all kinds of subjects including workflows, decentralized systems, functional programming, machine learning, combinator & graph rewriting systems
         <br /> */}
         <br />
-        My other academic interests include: information theory, cognitive science, math, physics, history, and statistics
+        My other academic interests include: information theory, cognitive science, math, physics, history, and statistics.
         <br />
         <br />
-        When not working or learning, I enjoy spending time with my wife & kid, hiking, playing board games, some video games, and trying to get in shape.
+        Outside of work, I enjoy spending time with my wife & son, hiking, playing board games, some video games, and trying to get in shape.
         {/* <br />
         Favorite things: Incomplete Nature by Terrence Deacon, Clickspring's Antikythera Mechanism video, Tigris & Euphrates by Reiner Knizia, Paths of Glory by Stanley Kubrick, Four Seasons recomposed by Max Richter,  */}
 
@@ -133,37 +133,37 @@ export default function Home() {
             fontSize: '1rem',
           }}>Fosforescent</span>: (work in progress) a platform & marketplace for collaborative workflows */}
           <br />
-          <div style={{
+          {/* <div style={{
             padding: '.5rem 0',
           }}>
             <span style={{
               fontSize: '1rem',
               display: 'inline-block',
             }}><a href="https://github.com/davidmnoll/netcode">Netcode:</a></span> (work in progress) a neuron-wise neural net library & playground
-          </div>
-          <div style={{
+          </div> */}
+          {/* <div style={{
             padding: '.5rem 0',
           }}>
             <span style={{
               fontSize: '1rem',
               display: 'inline-block',
             }}><a href="https://github.com/davidmnoll/pixel-time">PixelTime:</a></span> (work in progress) a web3 project allowing users to collaboratively make a series of images
+          </div> */}
+          <div style={{
+            padding: '.5rem 0',
+          }}>
+            <span style={{
+              // fontSize: '1rem',
+              display: 'inline-block',
+            }} className="underline"><a href="https://github.com/davidmnoll/pixel-time">Chkflow:</a></span> a React component editor/view for tree data inspired by Workflowy’s interface
           </div>
           <div style={{
             padding: '.5rem 0',
           }}>
             <span style={{
-              fontSize: '1rem',
+              // fontSize: '1rem',
               display: 'inline-block',
-            }}><a href="https://github.com/davidmnoll/pixel-time">Chkflow:</a></span> a React component editor/view for tree data inspired by Workflowy’s interface
-          </div>
-          <div style={{
-            padding: '.5rem 0',
-          }}>
-            <span style={{
-              fontSize: '1rem',
-              display: 'inline-block',
-            }}><a href="https://github.com/davidmnoll/pixel-time">GLTrader:</a></span> a custom python GUI for trading on the Bittrex exchange
+            }} className="underline"><a href="https://github.com/davidmnoll/pixel-time">GLTrader:</a></span> a custom python GUI for trading on the Bittrex exchange
             </div>
           </div>
         </div>

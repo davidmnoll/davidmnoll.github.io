@@ -12,7 +12,10 @@ import {
   Button,
 } from "@/components/ui/button"
 import {
-  HamburgerMenuIcon
+  BookmarkIcon,
+  GitHubLogoIcon,
+  HamburgerMenuIcon,
+  LinkedInLogoIcon
 } from "@radix-ui/react-icons"
 
 
@@ -25,6 +28,7 @@ import {
   // MagicWandIcon,
   HomeIcon
 } from '@radix-ui/react-icons'
+import { GithubIcon } from "lucide-react";
 
 
 export default function NavBar() {
@@ -48,7 +52,7 @@ export default function NavBar() {
             zIndex: 9,
           }} ><><HamburgerMenuIcon /> &nbsp; Menu</></Button> 
         </SheetTrigger>
-        <SheetContent className="w-[400px] sm:w-[540px] bg-gradient-radial from-green-400/5 via-cyan-900/5 to-blue-500/10 border-whispyblue/10">
+        <SheetContent className="w-[400px] sm:w-[540px] bg-gradient-radial from-gray-950/50 via-gray-950/50 to-gray-950/50 border-whispyblue/10">
           <SheetHeader>
             <SheetTitle>Where to?</SheetTitle>
           </SheetHeader>
@@ -60,21 +64,37 @@ export default function NavBar() {
             paddingBottom: "2rem",
             height: "100%",
           }}>
-            <p>
+            {/* <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
                 <NavLink to="/" reloadDocument className={classFunc} >Home <HomeIcon className="inline" /></NavLink>
               </Button>
-            </p>
+            </p> */}
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href="mailto:david.m.noll@gmail.com"> Mail <EnvelopeClosedIcon className='inline' /></a>
+                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href="mailto:david.m.noll@gmail.com" target="_blank"> Mail <EnvelopeClosedIcon className='inline' /></a>
               </Button>
             </p>
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={resumeUrl}> Resume <FileTextIcon className='inline' /></a>
+                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={resumeUrl} target="_blank"> Resume <FileTextIcon className='inline' /></a>
               </Button>
             </p>
+            <p>
+              <Button variant="ghost" className="hover:bg-whispyblue/5" >
+                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`https://github.com/davidmnoll`} target="_blank"> Github <GitHubLogoIcon className='inline' /></a>
+              </Button>
+            </p>
+            <p>
+              <Button variant="ghost" className="hover:bg-whispyblue/5" >
+                <a className={`text-popover-foreground inline-block`} href="https://www.linkedin.com/in/nolldavid/" target='_blank'>LinkedIn: <LinkedInLogoIcon className='inline' /></a>
+              </Button>
+            </p>
+            <p>
+              <Button variant="ghost" className="hover:bg-whispyblue/5" >
+                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`https://davidmnoll.substack.com/`} target="_blank"> Blog <BookmarkIcon className='inline' /></a>
+              </Button>
+            </p>
+
             {/* <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
                 <NavLink to="/skills" reloadDocument className={classFunc} >Skills <MagicWandIcon className="inline" /></NavLink>

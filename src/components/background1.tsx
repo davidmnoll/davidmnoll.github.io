@@ -25,7 +25,7 @@ const Background1 = () => {
 
   useEffect(() => {
 
-    const numIterations = 21
+    const numIterations = 7
     // console.log('iteration', iteration, numIterations)
 
     if (iteration < 0){
@@ -80,7 +80,7 @@ const Background1 = () => {
 
 
 
-  return <canvas ref={canvasRef} id="canvas" width="500" height="3" style={{
+  return <canvas ref={canvasRef} id="canvas" width="3" height="800" style={{
     'position': 'absolute',
     'top': '0',
     'left': '0',

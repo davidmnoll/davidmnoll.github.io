@@ -67,7 +67,7 @@ function App( { children } : { children?: React.ReactNode }) {
         <ChevronUpIcon /> scroll to top</Button></div>
       </div>
       {/* <ParticlesBg type="cobweb" bg={true} config={config} color="#99FFCC" /> */}
-      <Background2 />
+      {/* <Background2 /> */}
       <Background1 />
     </div>
   )
