@@ -91,10 +91,10 @@ export default function Home() {
         margin: '1rem 0',
         fontSize: '.8rem',
       }}  className="border-whispyblue/10 border-b border-t">
-        I am a full stack engineer with experience leading engineering developments in startup environments.  Most recently, I have been working to build <a href="https://info.fosforescent.com" className="underline">Fosforescent</a>, a visual dataflow language for task management and group coordination.
+        I am a full stack engineer with experience leading engineering developments in startup environments. 
         <br />
         <br />
-        My experience lies mostly in full stack development for web applications.  
+        My experience lies mostly in full stack development for web applications.  I have begun documenting some of my learning of other realms of software development <a href="https://davidmnoll.substack.com/" className='underline'>here</a>.
         <br />
         {/* <br />
         I'm interested in learning more about all kinds of subjects including workflows, decentralized systems, functional programming, machine learning, combinator & graph rewriting systems
