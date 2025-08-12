@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import Home from '@/components/pages/Home.tsx'
+import PostsPage from '@/components/pages/Posts'
+import Boids from '@/posts/boids'
 import './App.css'
 import './globals.css'
 
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <Home position="about" />,
+      },
+      {
+        path: "/posts",
+        element: <PostsPage />,
+      },
+      {
+        path: "/posts/boids",
+        element: <Boids />,
       },
     ]
   },

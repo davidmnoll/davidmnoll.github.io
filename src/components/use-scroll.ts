@@ -129,7 +129,7 @@ export const useIsScrolling = (elementId = null): IsScrollingValue => {
       element?.removeEventListener('scroll', throttledListener)
       clearTimer()
     }
-  } , [])
+  } , [elementId, throttledListener])
 
   return value
 }

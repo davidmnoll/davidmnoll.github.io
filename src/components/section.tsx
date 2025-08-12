@@ -11,7 +11,7 @@ const Section = ({ position, children, current } : { current: string, position: 
       console.log('current === position', current, position)
       ref.current?.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [])
+  }, [current, position])
   
   return (
     <div  className="section" ref={ref} style={{
