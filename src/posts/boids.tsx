@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import PostPage from './PostPage';
 import thumb from '@/assets/boids-thumb.svg';
 
