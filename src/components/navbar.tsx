@@ -19,7 +19,7 @@ import {
 } from "@radix-ui/react-icons"
 
 
-import resumeUrl from '@/../assets/pdf/DavidNoll-Resume.pdf'
+import resumeUrl from '@/../assets/pdf/David_Noll-Resume.pdf'
 
 import {
   EnvelopeClosedIcon,
@@ -49,7 +49,7 @@ export default function NavBar() {
         <SheetTrigger asChild>
           <Button variant="ghost" className="hover:bg-whispyblue/5" style={{
             zIndex: 9,
-          }} ><><HamburgerMenuIcon /> &nbsp; Menu</></Button> 
+          }} ><><HamburgerMenuIcon /> &nbsp; Menu</></Button>
         </SheetTrigger>
         <SheetContent className="w-[400px] sm:w-[540px] bg-gradient-radial from-gray-950/50 via-gray-950/50 to-gray-950/50 border-whispyblue/10">
           <SheetHeader>
@@ -110,5 +110,5 @@ export default function NavBar() {
 
     </div>
   )
-  
+
 }
