@@ -94,7 +94,7 @@ export default function Home() {
         I am a software engineer with recent work prototyping and exploring AI applications.  I have full stack and devops experience and have led engineering developments in startup environments.
         <br />
         <br />
-        With a background in cognitive science with a focus on linguistics, it's been very interesting to see the developments of LLM's.  It's fascinating to try to understand why they work so well and explore their capabilities.
+        With a background in cognitive science with a focus on linguistics, it's been very interesting to see the developments of LLMs.  It's fascinating to try to understand why they work so well and explore their capabilities.
         {/* My experience lies mostly in full stack development for web applications.  I have begun documenting some of my learning of other realms of software development <a href="https://davidmnoll.substack.com/" className='underline'>here</a>. */}
         <br />
         {/* <br />
@@ -104,7 +104,7 @@ export default function Home() {
         Other academic interests include: cybernetics, complex systems theory, alternative computational models like graph rewriting systems and process calculi, history, math, physics.
         <br />
         <br />
-        Outside of work, I enjoy spending time with my wife & son, hiking, playing board games, and trying to get back in shape.
+        Outside of work, I enjoy spending time with my wife & son, hiking, playing board games, and getting back in shape.
         {/* <br />
         Favorite things: Incomplete Nature by Terrence Deacon, Clickspring's Antikythera Mechanism video, Tigris & Euphrates by Reiner Knizia, Paths of Glory by Stanley Kubrick, Four Seasons recomposed by Max Richter,  */}
 
@@ -148,7 +148,7 @@ export default function Home() {
             <span style={{
               fontSize: '1rem',
               display: 'inline-block',
-            }}><a href="https://github.com/davidmnoll/pixel-time">PixelTime:</a></span> (work in progress) a web3 project allowing users to collaboratively make a series of images
+            }}><a href="https://github.com/davidmnoll/pixel-time">PixelTime:</a></span> (work in progress) a Web3 project allowing users to collaboratively make a series of images
           </div> */}
           <div style={{
             padding: '.5rem 0',
