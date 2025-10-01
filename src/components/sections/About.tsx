@@ -157,15 +157,15 @@ export default function Home() {
             <span style={{
               fontSize: '1rem',
               display: 'inline-block',
-            }} className="underline"><a href="https://github.com/davidmnoll/pixel-time">Chkflow:</a></span> a React component editor/view for tree data inspired by Workflowy’s interface
+            }} ><a href="https://github.com/davidmnoll/pixel-time">Chkflow:</a></span> a React component editor/view for tree data inspired by Workflowy’s interface
           </div>
           <div style={{
             padding: '.5rem 0',
           }}>
             <span style={{
-              // fontSize: '1rem',
+              fontSize: '1rem',
               display: 'inline-block',
-            }} className="underline"><a href="https://github.com/davidmnoll/pixel-time">GLTrader:</a></span> a custom python GUI for trading on the Bittrex exchange
+            }}><a href="https://github.com/davidmnoll/pixel-time">GLTrader:</a></span> a custom python GUI for trading on the Bittrex exchange
           </div>
         </div>
       </div>
