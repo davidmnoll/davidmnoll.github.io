@@ -89,7 +89,7 @@ export default function Home() {
         gridColumn: "1/3",
         padding: '1rem 0',
         margin: '1rem 0',
-        fontSize: '.8rem',
+        fontSize: '1rem',
       }} className="border-whispyblue/10 border-b border-t">
         I am a software engineer with recent work prototyping and exploring AI applications.  I have full stack and devops experience and have led engineering developments in startup environments.
         <br />
