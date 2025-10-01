@@ -1,5 +1,5 @@
 import profileImage from '@/../assets/img/profile.jpeg'
-import resumeUrl from '@/../assets/DavidNoll-Resume.pdf'
+import resumeUrl from '@/../assets/pdf/David_Noll-Resume.pdf'
 
 import {
   EnvelopeClosedIcon,
