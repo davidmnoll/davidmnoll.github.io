@@ -91,17 +91,17 @@ export default function Home() {
         margin: '1rem 0',
         fontSize: '.8rem',
       }} className="border-whispyblue/10 border-b border-t">
-        I am a software developer engineer with recent work prototyping and exploring AI applications.  I have full stack and devops experience as well as experience leading engineering developments in startup environments
+        I am a software engineer with recent work prototyping and exploring AI applications.  I have full stack and devops experience and have led engineering developments in startup environments.
         <br />
         <br />
-        With a background in cognitive science with a focus on linguistics, it's been very interesting to see the developments of LLM's.  I am hoping to apply the theoretical knowledge I've been developing over the years into products which can benefit people.
+        With a background in cognitive science with a focus on linguistics, it's been very interesting to see the developments of LLM's.  It's fascinating to try to understand why they work so well and explore their capabilities.
         {/* My experience lies mostly in full stack development for web applications.  I have begun documenting some of my learning of other realms of software development <a href="https://davidmnoll.substack.com/" className='underline'>here</a>. */}
         <br />
         {/* <br />
         I'm interested in learning more about all kinds of subjects including workflows, decentralized systems, functional programming, machine learning, combinator & graph rewriting systems
         <br /> */}
         <br />
-        My other academic interests include: cybernetics, complex systems theory, graph rewriting systems, history, category theory.
+        Other academic interests include: cybernetics, complex systems theory, alternative computational models like graph rewriting systems and process calculi, history, math, physics.
         <br />
         <br />
         Outside of work, I enjoy spending time with my wife & son, hiking, playing board games, and trying to get back in shape.
