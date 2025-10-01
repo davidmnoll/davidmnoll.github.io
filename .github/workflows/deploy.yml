@@ -2,8 +2,8 @@ name: React deploy
 
 on:
   push:
-    branches: [ "main" ]
-    
+    branches: ["main"]
+
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -19,7 +19,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -28,28 +27,28 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-    - name: Configure GitHub Pages
-      uses: actions/configure-pages@v3
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
-    - name: Checkout source code
-      uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20' # or another version if preferred
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # or another version if preferred
 
-    - name: Install dependencies
-      run: make install
+      - name: Install dependencies
+        run: make install
 
-    - name: Build app
-      run: make build
+      - name: Build app
+        run: make build
 
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: _site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
