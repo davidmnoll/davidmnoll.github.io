@@ -8,7 +8,7 @@ import './App.css'
 import './globals.css'
 
 import {
-  createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 
@@ -16,7 +16,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 
 import ErrorPage from "@/components/pages/Error";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,

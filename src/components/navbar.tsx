@@ -1,4 +1,5 @@
-// import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -32,6 +33,7 @@ import {
 
 
 export default function NavBar() {
+  const [open, setOpen] = useState(false);
 
   // const classFunc = ({ isActive, isPending }: {isActive: boolean, isPending: boolean}) =>
   //   isActive
@@ -46,7 +48,7 @@ export default function NavBar() {
       position: 'relative',
       zIndex: 7,
     }}>
-      <Sheet >
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" className="hover:bg-whispyblue/5" style={{
             zIndex: 9,
@@ -66,7 +68,7 @@ export default function NavBar() {
           }}>
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href="/"> Home <HomeIcon className='inline' /></a>
+                <Link className={`text-popover-foreground inline-block drop-shadow-lg`} to="/" onClick={() => setOpen(false)}> Home <HomeIcon className='inline' /></Link>
               </Button>
             </p>
             <p>
@@ -91,7 +93,7 @@ export default function NavBar() {
             </p>
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`/blog`} target="_blank"> Blog <Pencil1Icon className='inline' /></a>
+                <Link className={`text-popover-foreground inline-block drop-shadow-lg`} to="/blog" target="_blank" onClick={() => setOpen(false)}> Blog <Pencil1Icon className='inline' /></Link>
                 {/* <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`https://davidmnoll.substack.com/`} target="_blank"> Blog <BookmarkIcon className='inline' /></a> */}
               </Button>
             </p>
