@@ -12,10 +12,11 @@ import {
   Button,
 } from "@/components/ui/button"
 import {
-  BookmarkIcon,
+  // BookmarkIcon,
   GitHubLogoIcon,
   HamburgerMenuIcon,
-  LinkedInLogoIcon
+  LinkedInLogoIcon,
+  Pencil1Icon
 } from "@radix-ui/react-icons"
 
 
@@ -24,9 +25,9 @@ import resumeUrl from '@/../assets/pdf/David_Noll-Resume.pdf'
 import {
   EnvelopeClosedIcon,
   FileTextIcon,
+  HomeIcon,
   // PersonIcon,
   // MagicWandIcon,
-  // HomeIcon
 } from '@radix-ui/react-icons'
 
 
@@ -63,11 +64,11 @@ export default function NavBar() {
             paddingBottom: "2rem",
             height: "100%",
           }}>
-            {/* <p>
+            <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <NavLink to="/" reloadDocument className={classFunc} >Home <HomeIcon className="inline" /></NavLink>
+                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href="/"> Home <HomeIcon className='inline' /></a>
               </Button>
-            </p> */}
+            </p>
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
                 <a className={`text-popover-foreground inline-block drop-shadow-lg`} href="mailto:david.m.noll@gmail.com" target="_blank"> Mail <EnvelopeClosedIcon className='inline' /></a>
@@ -85,12 +86,13 @@ export default function NavBar() {
             </p>
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <a className={`text-popover-foreground inline-block`} href="https://www.linkedin.com/in/nolldavid/" target='_blank'>LinkedIn: <LinkedInLogoIcon className='inline' /></a>
+                <a className={`text-popover-foreground inline-block`} href="https://www.linkedin.com/in/nolldavid/" target='_blank'>LinkedIn <LinkedInLogoIcon className='inline' /></a>
               </Button>
             </p>
             <p>
               <Button variant="ghost" className="hover:bg-whispyblue/5" >
-                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`https://davidmnoll.substack.com/`} target="_blank"> Blog <BookmarkIcon className='inline' /></a>
+                <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`/blog`} target="_blank"> Blog <Pencil1Icon className='inline' /></a>
+                {/* <a className={`text-popover-foreground inline-block drop-shadow-lg`} href={`https://davidmnoll.substack.com/`} target="_blank"> Blog <BookmarkIcon className='inline' /></a> */}
               </Button>
             </p>
 

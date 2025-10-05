@@ -1,3 +1,4 @@
+.env
 
 .vite
 _site
@@ -26,3 +27,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+src/posts/generated-posts.ts

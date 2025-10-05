@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import Home from '@/components/pages/Home.tsx'
 import PostsPage from '@/components/pages/Posts'
-import Boids from '@/posts/boids'
+import { posts } from '@/posts'
 import './App.css'
 import './globals.css'
 
@@ -43,13 +43,14 @@ const router = createBrowserRouter([
         element: <Home position="about" />,
       },
       {
-        path: "/posts",
+        path: "/blog",
         element: <PostsPage />,
       },
-      {
-        path: "/posts/boids",
-        element: <Boids />,
-      },
+      // Dynamically generate routes for all posts at build time
+      ...posts.map(post => ({
+        path: `/blog/${post.slug}`,
+        element: React.createElement(post.component),
+      })),
     ]
   },
 ]);

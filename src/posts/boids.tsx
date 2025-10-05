@@ -8,6 +8,7 @@ export const meta = {
   summary:
     'A simple visual experiment showing how flocks of birds can emerge from three basic steering behaviours.',
   image: thumb,
+  date: '2025-08-12',
 };
 
 interface Boid {
@@ -127,10 +128,10 @@ export default function Boids() {
 
   return (
     <PostPage title={meta.title}>
-      <p className="mb-4 max-w-prose">
+      <p className="mb-4 w-full">
         Boids models flocking behaviour with three simple rules: separation, alignment and cohesion.
       </p>
-      <canvas ref={canvasRef} width={800} height={400} className="w-full border border-muted rounded" />
+      <canvas ref={canvasRef} width={700} height={250} className="w-full border border-muted rounded" />
     </PostPage>
   );
 }
