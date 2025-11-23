@@ -5,7 +5,7 @@ image: "/blog-images/goalsAsTypes.png"
 date: "2025-10-28"
 ---
 
-The famous Curry Howard correpsondence has spawned [copycat correspondences](https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-sessions/propositions-as-sessions.pdf).  Let's do it some more. 
+The Curry Howard correpsondence has spawned [copycat correspondences](https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-sessions/propositions-as-sessions.pdf).  Let's do it some more. 
 
 <details>
 <summary>First let's understand what types are and the original types as propositions correspondence. We can consider types as parts of computations graphs with their branches lopped off.</summary>
