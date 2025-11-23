@@ -10,13 +10,13 @@ The famous Curry Howard correpsondence has spawned [copycat correspondences](htt
 <details>
 <summary> First let's understand what types are and the original types as propositions correspondence.  We can consider types as parts of computations graphs with their branches lopped off.  </summary>
 
-    Types are most directly associated with sets.  However another way to understand types is by looking at the computation graph.  In this graph each node can be considered to represent an expression and the outgoing edges point to the sub-expressions that it depends on.  
+    Types are most directly associated with sets of values.  However another way to understand types is by looking at the computation graph.  In this graph each node can be considered to represent an expression and the outgoing edges point to the sub-expressions that it depends on.  These are ultimately equivalent.  A set of values is a set of graph shapes.  As long as the sum type is an acceptable graph shape, a set of graph shapes is itself a graph shape.  So I may move back and forth between these conceptions. 
 
     A type in this context can be modeled as a set of patterns (constructed of the same atomic units as the computation graph) which may or may not match up to a subgraph.  In other words at the node of the computation graph that we want to check against a certain type, we check whether the value has a matching constructor for the type at each relevant branch.  When the entire subtree is specified, the type can be inhabited only by a single value--the one with that same subtree.
 
     In a computational approach to logic, a proof must be depend on either assumptions or axioms.  Some axioms provide only initial values.  Other axioms provide "operators" that allow those initial values to be composed into compound statements.  Some of the compound statements can then be reduced again by other axioms.  We can analogize each statement to be an expression, and the simplification of the expression then corresponds to computation. 
     
-    In this world, a proposition is a statement that may or may not be true.  Whether it is true depends on whether a graph can be constructed from the primitives and axioms provided.  It may also be proved in more than one way.  In other words it's a depdenency graph with branches lopped off that must be compared to the dependency graphs we can inductively construct from our primitives. 
+    In this world, a proposition is a statement that may or may not be true.  Whether it is true depends on whether a graph can be constructed from the primitives and axioms provided.  It may also be proved in more than one way.  In other words it's a dependency graph with branches lopped off that must be compared to the dependency graphs we can inductively construct from our primitives. 
 
     [Here's a paper](http://strictlypositive.org/diff.pdf) illustrating a similar view on the matter.  
 </details>
@@ -40,7 +40,7 @@ The famous Curry Howard correpsondence has spawned [copycat correspondences](htt
 
     For a process calculus at first glance it is probably harder to find the connection.  However we just have to figure out where the dependency graph arises.  This is found in the sequence of calls between actors.  When A sends a message to B over a certain channel, this means B is listening for that message, which establishes the dependency.  So the graph is wired up via channels.  
 
-    When we then look at the idea of holes in that dependency graph which can be filled by many different subgraphs, we see that this corresponds to a process waiting for a message.  In the process calculus, we can imagine a truncated back and forth which could continue in one of a set of ways.  So we have an established sequence of interactions which creates within A and B a shared context to be continued in one of many ways... this is essentially the description of a protocol.  Sessions types are a particular way to type those protocols which allow agents A and B enough guarantees to type check the processes.
+    When we then look at the idea of holes in that dependency graph which can be filled by many different subgraphs, we see that this corresponds to a process waiting for a message.  In the process calculus, we can imagine a truncated back and forth which could continue in one of a set of ways.  So we have an established sequence of interactions which creates within A and B a shared context to be continued in one of many ways... this is essentially the description of a protocol.  Session types are a particular way to type those protocols which allow agents A and B enough guarantees to type check the processes.
 </details>
 
 
@@ -67,14 +67,14 @@ The famous Curry Howard correpsondence has spawned [copycat correspondences](htt
     But coroutines combine 2 instances of the type/computation model.  
     A typed coroutine with message passing between the routines is equivalent to a session type or process calculus view.  Meanwhile the actual computations happening are also their own dependency graph.  These 2 dependency graphs can have overlap, however there is a major important conflict: the arrow type that defines functions.  
 
-    In the process dependency graph, arrows are messages sent over a channel.  In the computation dependecy graph, they're functions where the variables are substituted. 
+    In the process dependency graph, arrows are messages sent over a channel.  In the computation dependency graph, they're functions where the variables are substituted. 
 
 </details>
 
 
 <details>
 <summary>Looking through this lens, we can consider effects to be modificatinos to the computation graph during runtime</summary>
-    These subgraphs are modifications to the compuation graph during runtime.  A subgraph may be added by arbitrary input, random generation, or retrieval from a file or network call. Even state, which is considered effectful in Haskell, would be copying/pointing to a subgraph from one part of a program's context to another. 
+    These subgraphs are modifications to the compuation graph during runtime.  For example, a subgraph may be added by arbitrary input, random generation, or retrieval from a file or network call. Even state, which is considered effectful in Haskell, would be copying/pointing to a subgraph from one part of a program's context to another. 
 
     One thing to note about effects is that they require a handler.  This can also be viewed as a default argument, but they need some value to be passed in -- in the case of an arrow, a function.  We can consider this to be a special case of any other variable initialization whereby when a typed variable is created, a value must be supplied before evaluation can proceed. 
 </details>
@@ -97,7 +97,7 @@ The famous Curry Howard correpsondence has spawned [copycat correspondences](htt
 
     This makes sense because in the real world, a task is generally awaiting some input.  If you have a subtask, it's because the larger task needs some input.  For instace "build a house" will have somewhere a subtask of "buy lumber" because that gets input into the final product.  In a program, the task may be awaiting input like a name, a choice, or a completion status.  That output of the subtask later becomes an input of the parent task.  It becomes a value that fills the parent's hole.  
 
-    [Here's a paper](https://www.researchgate.net/publication/27470058_Workflow_Patterns) illustrating that tasks can be composed with all-of, one-of, or sequential compostion... a common practice for workflow engines.  This mirrors the Promise.all, Promise.any, and Promise.then which we find in Javascript.  In types these very naturally correspond to the sum type, product type, and arrow type respectively.  
+    [Here's a paper](https://www.researchgate.net/publication/27470058_Workflow_Patterns) illustrating that tasks can be composed with all-of, one-of, or sequential compostion... a common practice for workflow engines.  This mirrors the Promise.any, Promise.all, and Promise.then which we find in Javascript.  In types these very naturally correspond to the sum type, product type, and arrow (if you assume no effects from the perspective of the promise graph) respectively.  
 
     So we may be able to simplify task management and workflow engines by modeling tasks this way.  In the world of AI agents completing tasks, this will likely be a critical tool for managing complexity. And on the topic of AI...
 
@@ -108,15 +108,13 @@ The famous Curry Howard correpsondence has spawned [copycat correspondences](htt
 
     Neural nets act differently during the inference versus training stages.  
 
-    There's an interesting correspondence to logic programming where the infinite space of possible values is progressively constrained and narrowed down in each layer until a single value is chosen.  This feels similar for a reason.  
-
     First let's consider the direction the dependencies go.  When running inference, the inputs are the leaves.  The hidden and output layers minus the inputs then correspond to a type.  As you move deeper toward the output layer, the types are more general.  Finally, you get to the output. So we can consider this a form of type inference.  The nerual net equivalent of parsing data constructors of a value. 
 
-    We can also consider transformers, which selectively suppress inputs.  By effectively lopping off some of the leaves of the branches, they're essentially saying "this a *types* of the thing I'm trying to infer".
+    We can also consider transformers, which selectively suppress inputs.  By suppressing activation so much that some leaves are effectively lopped off of the branches, they're essentially saying "these are the *types* of the thing I'm trying to infer".  From a certain angle, you could say that each output node represents a pattern and you're pattern matching on the input. 
 
     Now let's think of the training phase, in which these types are actually defined.  When our loss is computed, and the weights are recalculated based on the gradient, we're modifying the type to be less likely to include that term.  Semantically this all checks out.  
 
-    But the training phase updates the other way.  The actual label is the "leaf node", with the gradient calculation directly depending on that.  As you move toward the input layer, you're calculating new gradients depending on the output layer and all layers in between.  I'm not sure how to understand this semeantically.  However it's interesting to view this from the lens of [this paper](http://strictlypositive.org/diff.pdf) (referenced earlier).  I would like to explore whether/how the numeric derivative involved in gradient descent, which is apparently semantically a derivative on some type, might have some correspondence to the semantic type derivative from that paper.
+    But the training phase creates a corresponding graph that updates the other way.  In this gradient graph, the actual label is the "leaf node", with the gradient calculation directly depending on that.  As you move toward the input layer, you're calculating new gradients depending on the output layer and all layers in between.  I'm not sure how to understand this semeantically.  However it's interesting to view this from the lens of [this paper](http://strictlypositive.org/diff.pdf) (referenced earlier).  I would like to explore whether/how the numeric derivative involved in gradient descent, which is apparently semantically a derivative on some type, might have some correspondence to the semantic type derivative from that paper.
 
 </details>
 
