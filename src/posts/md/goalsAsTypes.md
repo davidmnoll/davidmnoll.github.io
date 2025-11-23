@@ -5,29 +5,39 @@ image: "/blog-images/goalsAsTypes.png"
 date: "2025-10-28"
 ---
 
-The famous Curry Howard correpsondence has spawned [copycat correspondences](https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-sessions/propositions-as-sessions.pdf).  Let's make another one. 
+The famous Curry Howard correpsondence has spawned [copycat correspondences](https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-sessions/propositions-as-sessions.pdf).  Let's do it again. 
 
 <details>
-<summary> First let's understand what types are.  We can consider types as term graphs with their branches lopped off.  </summary>
+<summary> First let's understand what types are and the original types as propositions correspondence.  We can consider types as parts of computations graphs with their branches lopped off.  </summary>
 
-The most straightforward way to understand types is by using the term graph model of computation.  This considers computations as a tree of expressions which get rewritten.  Variables determine the wiring of the terms.  A type in this context can be modeled as a set of patterns (constructed of the same atomic units as the term graph) which may or may not match up to a subgraph.  In other words at the node of the term graph that we want to check against a certain type, we check whether the value has a matching constructor for the type at each relevant branch.  When the entire subtree is specified, the type is precisely the value.
+    The most straightforward way to understand types is by looking at the computation graph.  In this graph each node can be considered to represent an expression and the outgoing edges point to the sub-expressions that it depends on.  
+
+    A type in this context can be modeled as a set of patterns (constructed of the same atomic units as the computation graph) which may or may not match up to a subgraph.  In other words at the node of the computation graph that we want to check against a certain type, we check whether the value has a matching constructor for the type at each relevant branch.  When the entire subtree is specified, the type can be inhabited only by a single value--the one with that same subtree.
+
+    In a computational approach to logic, a proof must be depend on either assumptions or axioms.  Some axioms provide only initial values.  Other axioms provide "operators" that allow those initial values to be composed into compound statements.  Some of the compound statements can then be reduced again by other axioms.  We can analogize each statement to be an expression, and the simplification of the expression then corresponds to computation. 
+    
+    In this world, a proposition is a statement that may or may not be true.  Whether it is true depends on whether a graph can be constructed from the primitives and axioms provided.  It may also be proved in more than one way.  In other words it's a depdenency graph with branches lopped off that must be compared to the dependency graphs we can inductively construct from our primitives. 
 </details>
 
 <details>
 <summary>Looking through this lens, we can consider effects to be subgraphs inserted during runtime</summary>
-These subgraphs are values that may be inserted by arbitrary input, random generation, or retrieval from a file or network call.  Even state which is considred effectful in Haskell would be copying a subgraph from one part of a program's context to another. 
+These subgraphs are modifications to the compuation graph during runtime.  A subgraph may be added by arbitrary input, random generation, or retrieval from a file or network call. Even state, which is considered effectful in Haskell, would be copying/pointing to a subgraph from one part of a program's context to another. 
 </details>
+<details>
+<summary>Variables determine the way things are wired up.  They can allow arbitrary wirings.  </summary>
+
+</details>
+
+
 
 <details>
 <summary> Let's consider how a traditional type system fits into Datalog</summary>
 
-Recall Datalog's basic semantics.  You can define "facts" and "rules".  And then you can run a query, which will use some kind of unification or constraint solving which determines if you can derive the appropriate value from the given facts and rules.  These are wired up by variable names.   ### You can intuitively model this by saying that dependency graph is created where you start with facts, rules are then applied to each set of facts to create a larger set of facts, some of which are compound.  In the end you have a dependency DAG where the same rule can create a new fact depending on which facts it's depending on.  So the variables in the rule statements determine the wiring of the graph ###  
+Recall Datalog's basic semantics.  You define "facts" and "rules".  Then you can run a query which will use some kind of unification or constraint solving to determine if you can derive the appropriate value from the given facts and rules. You can intuitively model this by saying that a dependency graph is created where you start with facts, rules are then applied to each set of facts to create a larger set of facts, some of which are compound.  In the end you have a dependency graph where the same rule can create a new fact depending on which facts it's depending on. 
 
-This kind of programming is disorienting at first, and the reason is because you're essentially thinking at the type level without necessarily realizing it.  
+We can identify that the query semantics are doing something like pattern matching.  According to our previous description of types, that would mean we're querying via type.  For exhaustive search among all potential values of a pattern, this wouldn't halt for some cases.  The "type" must be adequately constrained.  In datalog, only values which have been defined would be checked against the pattern, so the output is always constrained to a finite number of values.  
 
-We can identify that the query semantics are doing something like pattern matching.  According to our previous description of types, that would mean we're querying via type.  That only works if the type is adequately constrained.  In datalog this works no matter what because the only values that can inhabit types are values which have been defined in the scope, so the output is inherently constrained to a finite number of values.  
-
-As expected this fits nicely with the idea that "propositions" are "types".  The query is a proposition or type, and the result the equivalent of a combo of type check + find inhabitants in current scope. 
+So, in datalog you could say that you're programming at the type level.  This could explain why this type of programming can feel disorienting. 
 </details>
 
 <details>
@@ -74,13 +84,12 @@ What this means is that each task can be treated as a protocol or session type. 
 
 Each coroutine would then correspond to an actor/agent in a process calculus.  
 
-
 </details>
 
 <details>
 <summary>This means we can model asynchronous programming through a similar lens</summary>
 
-The asynchronous program is expressing a type and an effect is 
+The asynchronous program is expressing a type.  We could say it's a 
 
 </details>
 
