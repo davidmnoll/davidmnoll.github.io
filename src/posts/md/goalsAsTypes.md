@@ -42,11 +42,9 @@ When we then look at the idea of holes in that dependency graph which can be fil
 
 
 <details>
-<summary>This brings us to another point which is that coroutines also fall into this mix.</summary>
+<summary>Coroutines also fall into this mix in a similar way, as does asynchronous programming in general.  However they combine 2 instances of the type/computation model</summary>
 
- Tasks and workflows are most naturally suited to be modeled as coroutines which indicates that coroutines themselves can be modeled in a similar way with respect to the type correspondence.  Now how are these coroutines supposed to send signals back and forth to each other? 
-
-That brings us to another correspondence - the process / session correspondence.  A typed coroutine with message passing between the routines is equivalent to a session type.
+ A typed coroutine with message passing between the routines is equivalent to a session type.  
 
 So we can see that Tasks -> Workflows (compositions of tasks) -> Coroutines -> Process Calculi.  Now let's step back and flesh out the correspondence between process calculi and tasks.  
 
@@ -60,15 +58,11 @@ Each coroutine would then correspond to an actor/agent in a process calculus.
 
 </details>
 
-<details>
-<summary>This means we can model asynchronous programming through a similar lens</summary>
-
-The asynchronous program is expressing a type.  We could say it's a 
-
-</details>
 
 <details>
 <summary> In the context of the workflow / task world, goals are types</summary>
+
+Tasks and workflows are most naturally suited to be modeled as coroutines which indicates that coroutines themselves can be modeled in a similar way with respect to the type correspondence.  Now how are these coroutines supposed to send signals back and forth to each other? 
 
 With tasks the dependency graph is clear.  Subtasks complete tasks and hopefully update state which allows larger tasks to be marked as completed. 
 
@@ -101,6 +95,11 @@ The arbitrary names of channels correspond to the arbitrary names of variables -
 <details>
 <summary>Cut free proofs correspond to point free programming.  In the other realms these correspond to not creating intermediate channels/tables/subtasks  </summary>
 
+</details>
+
+<details>
+<summary>Let's also look at neural nets since they're obviously dependency graphs. </summary>
+These subgraphs are modifications to the compuation graph during runtime.  A subgraph may be added by arbitrary input, random generation, or retrieval from a file or network call. Even state, which is considered effectful in Haskell, would be copying/pointing to a subgraph from one part of a program's context to another. 
 </details>
 
 <details>
