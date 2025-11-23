@@ -101,11 +101,11 @@ const normalizeDirectoryEntries = (entries: DirectoryEntry[]): DirectoryEntry[] 
       return nameCompare;
     }
 
-    if (a.ref.kind === b.ref.kind) {
-      if (a.ref.kind === 'node') {
-        return a.ref.targetId.localeCompare(b.ref.targetId);
-      }
+    if (a.ref.kind === 'node' && b.ref.kind === 'node') {
+      return a.ref.targetId.localeCompare(b.ref.targetId);
+    }
 
+    if (a.ref.kind === 'alias' && b.ref.kind === 'alias') {
       return a.ref.aliasId.localeCompare(b.ref.aliasId);
     }
 
