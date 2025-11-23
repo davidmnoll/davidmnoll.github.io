@@ -133,3 +133,57 @@
     @apply bg-background text-foreground;
   }
 }
+
+.post-content {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.post-content details {
+  margin: 0.45rem 0;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.85rem;
+  border: 1px solid transparent;
+}
+
+.post-content details[open] {
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--secondary));
+}
+
+.dark .post-content details[open] {
+  background-color: hsl(var(--muted));
+}
+
+.post-content summary {
+  font-weight: 400;
+  cursor: pointer;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+  list-style: none;
+}
+
+.post-content summary::-webkit-details-marker {
+  display: none;
+}
+
+.post-content summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 0.4rem;
+  transition: transform 0.2s ease;
+}
+
+.post-content details[open] > summary::before {
+  content: '▾';
+}
+
+.post-content details > :not(summary) {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.post-content p {
+  margin: 0.6rem 0;
+}

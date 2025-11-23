@@ -26,10 +26,14 @@ export const getMarkdownPostPage = ({ frontMatter, content }: {
   }
 
   return (<PostPage title={frontMatter.title}>
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkMath]}
-      rehypePlugins={[rehypeKatex, rehypeMermaid, rehypeHighlight, rehypeRaw]}
-    >{content}</ReactMarkdown>
+    <div className="post-content leading-7">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex, rehypeMermaid, rehypeHighlight, rehypeRaw]}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   </PostPage>)
 
 }
@@ -39,7 +43,6 @@ export const getMarkdownPostPage = ({ frontMatter, content }: {
 export default function PostPage({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div
-      className="grid grid-cols-1 lg:grid-cols-1"
       style={{
         width: '100%',
         padding: '3vw 6vw',
@@ -47,8 +50,10 @@ export default function PostPage({ title, children }: { title: string; children:
         position: 'relative',
       }}
     >
-      <h1 className="text-3xl font-bold mb-4">{title}</h1>
-      {children}
+      <div className="mx-auto w-full lg:w-4/5 xl:w-3/4 max-w-4xl grid grid-cols-1">
+        <h1 className="text-3xl font-bold mb-4">{title}</h1>
+        {children}
+      </div>
     </div>
   );
 }
