@@ -1,5 +1,3 @@
-import { createHash, randomUUID } from 'crypto';
-
 export type ContentId = `cid:${string}`;
 export type AliasId = `alias:${string}`;
 
@@ -88,9 +86,25 @@ const canonicalJson = (value: unknown): string => {
   return JSON.stringify(value);
 };
 
+const generateRandomString = (): string => {
+  if (typeof globalThis.crypto !== 'undefined' && 'randomUUID' in globalThis.crypto) {
+    return globalThis.crypto.randomUUID();
+  }
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+};
+
+const simpleHash = (input: string): string => {
+  let hash = 0;
+  for (let index = 0; index < input.length; index += 1) {
+    hash = (hash << 5) - hash + input.charCodeAt(index);
+    hash |= 0;
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+};
+
 const deriveContentId = (payload: unknown): ContentId => {
   const canonicalPayload = canonicalJson(payload);
-  const digest = createHash('sha256').update(canonicalPayload).digest('hex');
+  const digest = simpleHash(canonicalPayload + generateRandomString());
   return `cid:${digest}`;
 };
 
@@ -150,7 +164,7 @@ export const createDirectoryNode = (params: {
 };
 
 export const createAlias = (targetId: ContentId, description?: string, aliasId?: AliasId): MutableAlias => ({
-  aliasId: aliasId ?? (`alias:${randomUUID()}` as AliasId),
+  aliasId: aliasId ?? (`alias:${generateRandomString()}` as AliasId),
   targetId,
   description,
 });

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import Home from '@/components/pages/Home.tsx'
 import PostsPage from '@/components/pages/Posts'
+import FosPage from '@/components/pages/Fos'
 import { posts } from '@/posts'
 import './App.css'
 import './globals.css'
@@ -25,6 +26,10 @@ const router = createHashRouter([
       {
         path: "/",
         element: <Home position="" />,
+      },
+      {
+        path: "/fos",
+        element: <FosPage />,
       },
       {
         path: "/contact",
