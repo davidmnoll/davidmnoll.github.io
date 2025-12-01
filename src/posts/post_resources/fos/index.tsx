@@ -1,66 +1,22 @@
 
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
-import FosScopeBuilder from './fosScopeBuilder';
-
-type Primitive = string | number | boolean;
-type ScalarBase = 'String' | 'Number' | 'Boolean';
-type Modality = 'cartesian' | 'linear';
-type TypeFlavor = 'struct' | 'sigma' | 'pi' | 'observation';
-
-interface ScalarType {
-  kind: 'scalar';
-  base: ScalarBase;
-  multiline?: boolean;
-}
-
-interface LiteralType {
-  kind: 'literal';
-  value: Primitive;
-}
-
-type FosTypeDescriptor = ScalarType | LiteralType;
-type TypeResolver = FosTypeDescriptor | ((ctx: Record<string, unknown>) => FosTypeDescriptor);
-
-export interface FieldDescriptor {
-  name: string;
-  label?: string;
-  type: TypeResolver;
-  optional?: boolean;
-  input?: 'text' | 'textarea';
-}
-
-export interface StructTypeDescriptor {
-  name: string;
-  label?: string;
-  predicate: string;
-  fields: FieldDescriptor[];
-  identityField?: string;
-  kind: TypeFlavor;
-  observes?: string;
-  dimension: number;
-  sourceField?: string;
-  targetField?: string;
-  modality: Modality;
-}
-
-export interface HoleDescriptor {
-  name: string;
-  typeName: string;
-  description?: string;
-  factPredicate?: string;
-  pi?: {
-    parameter: string;
-    viaField?: string;
-    modality: Modality;
-  };
-}
-
-export interface ProgramDefinition {
-  name: string;
-  types: Record<string, StructTypeDescriptor>;
-  holes: HoleDescriptor[];
-  predicateToType: Record<string, string>;
-}
+import FosScopeBuilder from './scopeBuilder';
+import type {
+  Primitive,
+  Modality,
+  TypeFlavor,
+  TypeResolver,
+  FieldDescriptor,
+  StructTypeDescriptor,
+  HoleDescriptor,
+  ProgramDefinition,
+  LinearResourceState,
+  ConsumptionRequest,
+  CallEndpointOptions,
+  Fact,
+} from './types';
+import { resolveType, literal, scalar } from './types';
+export { literal, scalar } from './types';
 
 type FosEvent =
   | { kind: 'fact-asserted'; fact: Fact; timestamp: number }
@@ -70,12 +26,6 @@ type FosEvent =
 interface EventStorage {
   load(): FosEvent[];
   append(event: FosEvent): void;
-}
-
-interface Fact {
-  predicate: string;
-  args: Record<string, unknown>;
-  timestamp: number;
 }
 
 interface QueryPattern {
@@ -93,22 +43,11 @@ interface VarPattern {
   name: string;
 }
 
-type PatternValue = Primitive | VarPattern | Record<string, PatternValue>;
-
-interface LinearResourceState {
-  identity: string;
-  consumed: boolean;
-  fact?: Fact;
+interface PatternObject {
+  [key: string]: PatternValue;
 }
 
-interface ConsumptionRequest {
-  typeName: string;
-  identity: string;
-}
-
-interface CallEndpointOptions {
-  consumeLinear?: ConsumptionRequest[];
-}
+type PatternValue = Primitive | VarPattern | PatternObject;
 
 const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
 
@@ -162,8 +101,7 @@ interface HoleProps {
 }
 
 function createAstComponent<P>(kind: 'program' | 'type' | 'field' | 'hole') {
-  const Wrap = (props: { children?: ReactNode }) => <>{props.children}</>;
-  const Component = Wrap as FosAstComponent<P>;
+  const Component = ((props: P & { children?: ReactNode }) => <>{props.children}</>) as FosAstComponent<P>;
   Component.fosKind = kind;
   return Component;
 }
@@ -172,14 +110,6 @@ export const ProgramNode = createAstComponent<ProgramProps>('program');
 export const TypeNode = createAstComponent<TypeProps>('type');
 export const FieldNode = createAstComponent<FieldProps>('field');
 export const HoleNode = createAstComponent<HoleProps>('hole');
-
-const resolveType = (resolver: TypeResolver, ctx: Record<string, unknown>): FosTypeDescriptor =>
-  typeof resolver === 'function' ? resolver(ctx) : resolver;
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const literal = (value: Primitive): LiteralType => ({ kind: 'literal', value });
-// eslint-disable-next-line react-refresh/only-export-components
-export const scalar = (base: ScalarBase, multiline = false): ScalarType => ({ kind: 'scalar', base, multiline });
 
 const finalizeTypeGraph = (types: Record<string, StructTypeDescriptor>) => {
   const memo = new Map<string, number>();
@@ -305,7 +235,9 @@ class EventStream {
 
   subscribe(listener: (event: FosEvent) => void) {
     this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
   }
 }
 
@@ -351,7 +283,7 @@ export class LocalStorageEventStorage implements EventStorage {
       this.cache = [];
       store.removeItem(this.key);
     }
-    return [...this.cache];
+    return this.cache ? [...this.cache] : [];
   }
 
   append(event: FosEvent) {
@@ -406,7 +338,7 @@ const tryNormalizePrimitive = (value: unknown): Primitive => {
 export const FosVar = (name: string): VarPattern => ({ kind: 'var', name });
 
 const isVarPattern = (value: PatternValue): value is VarPattern =>
-  isObject(value) && 'kind' in value && (value as VarPattern).kind === 'var';
+  typeof value === 'object' && value !== null && (value as VarPattern).kind === 'var';
 
 const unify = (
   pattern: PatternValue,
@@ -686,6 +618,13 @@ export class FosRuntime {
     table.get(identity)!.consumed = true;
   }
 
+  private ensureLinearTable(typeName: string) {
+    if (!this.linearResources.has(typeName)) {
+      this.linearResources.set(typeName, new Map());
+    }
+    return this.linearResources.get(typeName)!;
+  }
+
   queryFacts(pattern: QueryPattern): QueryResult[] {
     const relevant = this.facts.filter(fact => fact.predicate === pattern.predicate);
     return relevant
@@ -829,54 +768,6 @@ export const attachCliServer = (runtime: FosRuntime, transport: FosCliTransport)
   });
 };
 
-const renderFieldInput = (
-  field: FieldDescriptor,
-  resolvedType: FosTypeDescriptor,
-  value: Record<string, unknown>,
-  onFieldChange: (name: string, next: unknown) => void
-) => {
-  const current = value[field.name];
-
-  if (resolvedType.kind === 'literal') {
-    return (
-      <div key={field.name} className="flex flex-col gap-1 text-sm">
-        <span className="text-foreground/70">{field.label ?? field.name}</span>
-        <div className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs uppercase tracking-widest text-foreground/80">
-          {String(resolvedType.value)}
-        </div>
-      </div>
-    );
-  }
-
-  if (resolvedType.kind === 'scalar') {
-    const commonProps = {
-      id: field.name,
-      name: field.name,
-      value: typeof current === 'string' ? current : '',
-      onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-        onFieldChange(field.name, event.target.value),
-      placeholder: field.label ?? field.name,
-      className:
-        'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-foreground/40 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20',
-    };
-
-    return (
-      <div key={field.name} className="flex flex-col gap-1 text-sm">
-        <label htmlFor={field.name} className="text-foreground/70">
-          {field.label ?? field.name}
-        </label>
-        {resolvedType.multiline || field.input === 'textarea' ? (
-          <textarea {...commonProps} rows={3} />
-        ) : (
-          <input {...commonProps} />
-        )}
-      </div>
-    );
-  }
-
-  return null;
-};
-
 const useFosRuntime = (definition: ProgramDefinition) => {
   const storage = useMemo(() => new LocalStorageEventStorage(`fos.events.${definition.name}`), [definition.name]);
   const runtime = useMemo(() => new FosRuntime(definition, storage), [definition, storage]);
@@ -886,22 +777,6 @@ const useFosRuntime = (definition: ProgramDefinition) => {
 
   return runtime;
 };
-
-const ProgramShell: React.FC<{ title?: string; children: React.ReactNode; description?: string }> = ({
-  title,
-  children,
-  description,
-}) => (
-  <section className="rounded-2xl border border-white/10 bg-slate-900/60 p-6 shadow-2xl shadow-black/40 backdrop-blur-sm">
-    {(title || description) && (
-      <header className="mb-4 space-y-2">
-        {title && <p className="text-xs uppercase tracking-[0.25em] text-foreground/60">{title}</p>}
-        {description && <p className="text-sm text-foreground/70">{description}</p>}
-      </header>
-    )}
-    <div className="space-y-6 text-sm">{children}</div>
-  </section>
-);
 
 export const FosWrapperComponent = () => {
   const programAst = useMemo(
@@ -963,408 +838,17 @@ export const FosWrapperComponent = () => {
 
   const programDefinition = useMemo(() => interpretProgram(programAst), [programAst]);
   const runtime = useFosRuntime(programDefinition);
-  const [formState, setFormState] = useState<Record<string, unknown>>(() => runtime.createBlankValue('Todo'));
-  const [pathForm, setPathForm] = useState<Record<string, unknown>>(() => runtime.createBlankValue('TodoPath'));
-  const [ticketForm, setTicketForm] = useState<Record<string, unknown>>(() => runtime.createBlankValue('TodoTicket'));
-  const [queryFilter, setQueryFilter] = useState('');
-
-  useEffect(() => {
-    setFormState(runtime.createBlankValue('Todo'));
-    setPathForm(runtime.createBlankValue('TodoPath'));
-    setTicketForm(runtime.createBlankValue('TodoTicket'));
-  }, [runtime]);
-
-  const todoType = runtime.describeType('Todo');
-  const todoPathType = runtime.describeType('TodoPath');
-  const createTodoHole = runtime.getHoles().find(hole => hole.name === 'createTodo');
-  const piDescriptor = createTodoHole?.pi;
-  const todoDimension = runtime.getTypeDimension('Todo');
-  const todoPathDimension = runtime.getTypeDimension('TodoPath');
-  const sourceField = todoPathType.sourceField ?? 'fromSlug';
-  const targetField = todoPathType.targetField ?? 'toSlug';
-
-  const onFieldChange = (name: string, next: unknown) => {
-    const draft = { ...formState, [name]: next };
-    setFormState(runtime.normalizeStructValue('Todo', draft));
-  };
-
-  const onSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!formState.ticketId || typeof formState.ticketId !== 'string' || formState.ticketId.length === 0) {
-      window.alert('Mint and select a Todo ticket (linear resource) before creating a Todo.');
-      return;
-    }
-    runtime.callEndpoint('createTodo', formState);
-    setFormState(runtime.createBlankValue('Todo'));
-  };
-
-  const onTicketFieldChange = (name: string, next: unknown) => {
-    const draft = { ...ticketForm, [name]: next };
-    setTicketForm(runtime.normalizeStructValue('TodoTicket', draft));
-  };
-
-  const generateTicketId = () => {
-    const randomId = `ticket-${Math.random().toString(36).slice(2, 7)}-${Date.now().toString(36)}`;
-    setTicketForm(form => ({ ...form, ticketId: randomId }));
-  };
-
-  const onTicketSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!ticketForm.ticketId || typeof ticketForm.ticketId !== 'string' || ticketForm.ticketId.length === 0) {
-      window.alert('Provide a ticket ID (use the generator for convenience).');
-      return;
-    }
-    runtime.callEndpoint('issueTicket', ticketForm);
-    setTicketForm(runtime.createBlankValue('TodoTicket'));
-  };
-
-  const onPathFieldChange = (name: string, next: unknown) => {
-    const draft = { ...pathForm, [name]: next };
-    setPathForm(runtime.normalizeStructValue('TodoPath', draft));
-  };
-
-  const onPathSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    const sourceField = todoPathType.sourceField ?? 'fromSlug';
-    const targetField = todoPathType.targetField ?? 'toSlug';
-    const source = pathForm[sourceField];
-    const target = pathForm[targetField];
-    if (!source || !target) return;
-    if (String(source) === String(target)) return;
-    runtime.callEndpoint('linkTodos', pathForm);
-    setPathForm(runtime.createBlankValue('TodoPath'));
-  };
-
-  const ticketType = runtime.describeType('TodoTicket');
-  const ticketResources = runtime.getLinearResources('TodoTicket');
-  const availableTicketStates = ticketResources.filter(resource => !resource.consumed);
-  const availableTicketKey = availableTicketStates.map(resource => resource.identity).join('|');
-
-  useEffect(() => {
-    setFormState(prev => {
-      const current = typeof prev.ticketId === 'string' ? prev.ticketId : '';
-      const firstAvailable = availableTicketStates[0]?.identity ?? '';
-      if (!firstAvailable) {
-        if (!current) return prev;
-        return { ...prev, ticketId: '' };
-      }
-      if (current && availableTicketStates.some(state => state.identity === current)) {
-        return prev;
-      }
-      return { ...prev, ticketId: firstAvailable };
-    });
-  }, [availableTicketKey, availableTicketStates]);
-
-  const todos = runtime.queryFacts({
-    predicate: 'todo',
-    args: {
-      description: queryFilter ? queryFilter : FosVar('description'),
-      slug: FosVar('slug'),
-    },
-  });
-
-  const allTodos = runtime.queryFacts({ predicate: 'todo' });
-  const slugToTodo = new Map<string, string>();
-  allTodos.forEach(result => {
-    const slugValue = result.fact.args.slug;
-    if (typeof slugValue === 'string') {
-      const description = typeof result.fact.args.description === 'string' ? result.fact.args.description : slugValue;
-      slugToTodo.set(slugValue, description);
-    }
-  });
-  const slugOptions = Array.from(slugToTodo.keys());
-  const availableTicketOptions = availableTicketStates.map(state => ({
-    identity: state.identity,
-    scope: typeof state.fact?.args.scope === 'string' ? (state.fact?.args.scope as string) : 'Unscoped',
-    issued: typeof state.fact?.args.issued === 'string' ? (state.fact?.args.issued as string) : undefined,
-  }));
-  const consumedTicketStates = ticketResources.filter(resource => resource.consumed);
-  const ticketStats = {
-    total: ticketResources.length,
-    available: availableTicketStates.length,
-    consumed: consumedTicketStates.length,
-  };
-  const todoPaths = runtime.queryFacts({ predicate: 'todoPath' });
-  const equivalenceClasses = runtime.getEquivalenceClasses('Todo');
 
   return (
     <div className="flex flex-col gap-10">
-      <ProgramShell>
-        <FosScopeBuilder />
-      </ProgramShell>
-
-      <details className="rounded-3xl border border-white/10 bg-black/30 p-4 shadow-inner shadow-black/20">
-        <summary className="cursor-pointer text-xs uppercase tracking-[0.4em] text-foreground/50">
-          Advanced Fos Runtime (optional)
-        </summary>
-        <div className="mt-6 flex flex-col gap-8">
-          <ProgramShell
-            title="Σ Tickets (Linear Modality)"
-            description="Mint Σ-pairs that package a ticket identifier with its scope. Because they are linear, each ticket can be consumed only once."
-          >
-            <form onSubmit={onTicketSubmit} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                {ticketType.fields.map(field => {
-                  const resolved = resolveType(field.type, ticketForm);
-                  const fieldNode = renderFieldInput(field, resolved, ticketForm, onTicketFieldChange);
-                  if (field.name !== 'ticketId') return fieldNode;
-                  return (
-                    <div key={field.name} className="flex flex-col gap-2">
-                      {fieldNode}
-                      <button
-                        type="button"
-                        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs uppercase tracking-widest text-foreground/70 transition hover:border-white/30"
-                        onClick={generateTicketId}
-                      >
-                        Generate Ticket ID
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs uppercase tracking-widest text-foreground/60">
-                  Available <span className="block text-2xl font-semibold text-white">{ticketStats.available}</span>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs uppercase tracking-widest text-foreground/60">
-                  Consumed <span className="block text-2xl font-semibold text-white">{ticketStats.consumed}</span>
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-amber-400/80 py-3 text-center text-sm font-semibold uppercase tracking-wide text-amber-900 shadow-lg shadow-amber-900/30 transition hover:bg-amber-300"
-              >
-                Mint Linear Ticket
-              </button>
-            </form>
-
-            <ul className="mt-4 space-y-2 text-sm">
-              {ticketResources.map(resource => (
-                <li
-                  key={resource.identity}
-                  className="rounded-xl border border-white/5 bg-white/5 px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
-                >
-                  <div>
-                    <p className="font-semibold text-white">
-                      {resource.identity}{' '}
-                      <span className="ml-2 rounded-full border border-white/10 px-2 py-0.5 text-xs uppercase tracking-wide text-foreground/60">
-                        Σ scope: {String(resource.fact?.args.scope ?? 'Unscoped')}
-                      </span>
-                    </p>
-                    <p className="text-xs text-foreground/50">
-                      Issued {resource.fact?.args.issued ? new Date(resource.fact.args.issued as string).toLocaleString() : '—'}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs uppercase tracking-widest ${
-                      resource.consumed
-                        ? 'bg-rose-500/20 text-rose-200 border border-rose-500/50'
-                        : 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/40'
-                    }`}
-                  >
-                    {resource.consumed ? 'Consumed' : 'Available'}
-                  </span>
-                </li>
-              ))}
-              {ticketResources.length === 0 && (
-                <li className="rounded-xl border border-dashed border-white/20 px-4 py-3 text-foreground/60">
-                  Mint a ticket to seed the linear resource pool.
-                </li>
-              )}
-            </ul>
-          </ProgramShell>
-
-          <ProgramShell
-            title="Π Endpoint: Ticket ⊸ Todo"
-            description={
-              piDescriptor
-                ? `This hole is typed as Π(${piDescriptor.parameter} → ${createTodoHole?.typeName}) with ${piDescriptor.modality} modality on the argument. Spend one Σ ticket above to inhabit the Todo.`
-                : 'Fill the dependently typed Todo goal and watch the runtime advertise new paths to every connected peer.'
-            }
-          >
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                {todoType.fields.map(field => {
-                  if (field.name === 'ticketId') {
-                    return (
-                      <div key={field.name} className="flex flex-col gap-1 text-sm">
-                        <label className="text-foreground/70" htmlFor="todo-ticket-select">
-                          Ticket (linear)
-                        </label>
-                        <select
-                          id="todo-ticket-select"
-                          value={typeof formState.ticketId === 'string' ? formState.ticketId : ''}
-                          onChange={event => setFormState(prev => ({ ...prev, ticketId: event.target.value }))}
-                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
-                          disabled={availableTicketOptions.length === 0}
-                        >
-                          {availableTicketOptions.map(option => (
-                            <option key={option.identity} value={option.identity}>
-                              {option.identity} · {option.scope}
-                            </option>
-                          ))}
-                        </select>
-                        {availableTicketOptions.length === 0 && (
-                          <p className="text-xs text-rose-300/80">No tickets available. Mint one above.</p>
-                        )}
-                      </div>
-                    );
-                  }
-                  const resolved = resolveType(field.type, formState);
-                  return renderFieldInput(field, resolved, formState, onFieldChange);
-                })}
-              </div>
-              <button
-                type="submit"
-                disabled={availableTicketOptions.length === 0}
-                className="w-full rounded-xl bg-emerald-500/80 py-3 text-center text-sm font-semibold uppercase tracking-wide text-emerald-950 shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Fill Hole / Add Todo
-              </button>
-            </form>
-          </ProgramShell>
-
-          <ProgramShell
-            title="Homotopy / Observational Paths"
-            description={`Following the higher observational types strategy popularized by Narya, the TodoPath type observes Todo, lifting us from dimension ${todoDimension} to ${todoPathDimension}. Each witness glues two endpoints so any CLI, WebRTC peer, or browser session can reason about the resulting homotopy classes.`}
-          >
-            <form onSubmit={onPathSubmit} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                {todoPathType.fields.map(field => {
-                  const resolved = resolveType(field.type, pathForm);
-                  if (field.name === sourceField || field.name === targetField) {
-                    return (
-                      <div key={field.name} className="flex flex-col gap-1 text-sm">
-                        <label className="text-foreground/70" htmlFor={`path-${field.name}`}>
-                          {field.label ?? field.name}
-                        </label>
-                        <select
-                          id={`path-${field.name}`}
-                          name={field.name}
-                          value={(pathForm[field.name] as string) ?? ''}
-                          onChange={event => onPathFieldChange(field.name, event.target.value)}
-                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
-                        >
-                          <option value="">Select a todo</option>
-                          {slugOptions.map(slug => (
-                            <option key={slug} value={slug}>
-                              {(slugToTodo.get(slug) ?? slug) + ` (${slug})`}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    );
-                  }
-                  return renderFieldInput(field, resolved, pathForm, onPathFieldChange);
-                })}
-              </div>
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-indigo-500/80 py-3 text-center text-sm font-semibold uppercase tracking-wide text-indigo-950 shadow-lg shadow-indigo-900/40 transition hover:bg-indigo-400"
-              >
-                Link Todos / Record Path
-              </button>
-            </form>
-
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-semibold uppercase tracking-widest text-foreground/60">Recorded paths</h4>
-                <ul className="mt-2 space-y-2 text-sm">
-                  {todoPaths.map(result => (
-                    <li
-                      key={result.fact.timestamp}
-                      className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-4 py-2"
-                    >
-                      <span className="font-semibold text-white">
-                        {String(result.fact.args[sourceField] ?? '??')} → {String(result.fact.args[targetField] ?? '??')}
-                      </span>
-                      {result.fact.args.witness && (
-                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-foreground/70">
-                          {String(result.fact.args.witness)}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                  {todoPaths.length === 0 && (
-                    <li className="rounded-xl border border-dashed border-white/20 px-4 py-3 text-foreground/60">
-                      No observational paths yet.
-                    </li>
-                  )}
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-sm font-semibold uppercase tracking-widest text-foreground/60">π₀ Classes</h4>
-                {equivalenceClasses.length === 0 && (
-                  <p className="mt-2 text-sm text-foreground/60">Link two todos to create the first equivalence class.</p>
-                )}
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  {equivalenceClasses.map((group, index) => (
-                    <div
-                      key={`${group.join('-')}-${index}`}
-                      className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-900/30 p-4 text-sm"
-                    >
-                      <p className="mb-2 text-xs uppercase tracking-widest text-foreground/50">Class {index + 1}</p>
-                      <ul className="space-y-1">
-                        {group.map(slug => (
-                          <li key={slug} className="flex items-center justify-between">
-                            <span>{slugToTodo.get(slug) ?? slug}</span>
-                            <code className="rounded bg-black/40 px-2 py-0.5 text-xs text-foreground/70">{slug}</code>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </ProgramShell>
-
-          <ProgramShell
-            title="Datalog-style Queries"
-            description="Queries are just patterns. Leave the filter empty to bind the variable and inspect every Todo fact."
-          >
-            <div className="space-y-3">
-              <input
-                value={queryFilter}
-                placeholder="Exact match filter"
-                onChange={event => setQueryFilter(event.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-foreground/40 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
-              />
-              <ul className="space-y-2">
-                {todos.map(result => (
-                  <li
-                    key={result.fact.timestamp}
-                    className="flex flex-col rounded-xl border border-white/5 bg-white/5 px-4 py-3 text-sm text-white"
-                  >
-                    <strong className="text-base">{result.fact.args.description as string}</strong>
-                    <span className="text-xs uppercase tracking-widest text-foreground/50">{result.fact.args.slug as string}</span>
-                  </li>
-                ))}
-                {todos.length === 0 && (
-                  <li className="rounded-xl border border-dashed border-white/20 px-4 py-3 text-foreground/60">No todos yet.</li>
-                )}
-              </ul>
-            </div>
-          </ProgramShell>
-
-          <ProgramShell
-            title="Event-driven Frontend & Backend"
-            description="Storage stays abstract. The browser persists to localStorage, while a CLI/Node host can pass in a file-backed adapter."
-          >
-            <pre className="rounded-2xl bg-black/60 p-4 text-xs text-emerald-200">
-{`const fs = require('fs');
-const storage = new FileEventStorage('todos.json', fs);
-const runtime = new FosRuntime(definition, storage);
-
-runtime.callEndpoint('issueTicket', { ticketId: 'seed-1', scope: 'cli', issued: new Date().toISOString() });
-runtime.callEndpoint('createTodo', { description: 'First task', slug: 'first-task', ticketId: 'seed-1' });
-attachCliServer(runtime, transport);`}
-            </pre>
-          </ProgramShell>
-
-        </div>
-      </details>
+      <FosScopeBuilder
+        holes={runtime.getHoles()}
+        createBlankValue={typeName => runtime.createBlankValue(typeName)}
+        normalizeStructValue={(typeName, value) => runtime.normalizeStructValue(typeName, value)}
+        describeType={typeName => runtime.describeType(typeName)}
+        callEndpoint={(holeName, value) => runtime.callEndpoint(holeName, value)}
+        getLinearResources={typeName => runtime.getLinearResources(typeName)}
+      />
     </div>
   );
 };
