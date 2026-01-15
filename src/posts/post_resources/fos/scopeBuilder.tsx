@@ -28,21 +28,27 @@ interface ScopeVariable {
   resource?: ResourceMetadata;
 }
 
-interface TaskFormDefinition {
-  id: string;
-  label: string;
-  action: 'deposit' | 'withdraw';
-  resourceType: string;
-  description?: string;
-  expressionType?: string;
-}
+type ScopeEvalFunctionId = 'identity' | 'annotate-with-scope';
 
 interface ScopeMetadata extends Record<string, unknown> {
   nodeKind: 'scope';
   label: string;
   variables: ScopeVariable[];
   allowedTypes?: string[];
-  taskForms?: TaskFormDefinition[];
+  evalFunction?: ScopeEvalFunctionId;
+}
+
+interface FunctionParameter {
+  name: string;
+  type: string;
+  role?: 'resource' | 'effect' | 'value';
+}
+
+interface FunctionSignature {
+  label?: string;
+  description?: string;
+  action?: 'deposit' | 'withdraw';
+  parameters: FunctionParameter[];
 }
 
 interface ExpressionMetadata extends Record<string, unknown> {
@@ -50,6 +56,7 @@ interface ExpressionMetadata extends Record<string, unknown> {
   label: string;
   typeName: string;
   fields: ExpressionField[];
+  signature?: FunctionSignature;
 }
 
 type ExpressionBinding =
@@ -72,6 +79,15 @@ const SPECIAL_TYPE_OPTIONS = ['Type', 'Variable', 'HoTT Equality', 'Sigma', 'Pi'
 const HOTT_EQUALITY_CONSTRUCTORS = ['refl', 'sym', 'trans'] as const;
 type EqualityConstructor = (typeof HOTT_EQUALITY_CONSTRUCTORS)[number];
 
+interface ScopeEvalFunctionDefinition {
+  id: ScopeEvalFunctionId;
+  label: string;
+  description: string;
+  apply: (input: { node: DirectoryNode; scope: ScopeMetadata }) => DirectoryNode;
+}
+
+const DEFAULT_SCOPE_EVAL_FUNCTION: ScopeEvalFunctionId = 'identity';
+
 interface FosScopeBuilderProps {
   holes: HoleDescriptor[];
   createBlankValue: (typeName: string) => Record<string, unknown>;
@@ -92,6 +108,7 @@ const createScopeNode = (label: string): DirectoryNode => ({
     nodeKind: 'scope',
     label,
     variables: [],
+    evalFunction: DEFAULT_SCOPE_EVAL_FUNCTION,
   } satisfies ScopeMetadata,
 });
 
@@ -114,6 +131,44 @@ const isScopeMetadata = (metadata: DirectoryNode['metadata']): metadata is Scope
 
 const isExpressionMetadata = (metadata: DirectoryNode['metadata']): metadata is ExpressionMetadata =>
   Boolean(metadata && (metadata as ExpressionMetadata).nodeKind === 'expression');
+
+const SCOPE_EVAL_FUNCTIONS: Record<ScopeEvalFunctionId, ScopeEvalFunctionDefinition> = {
+  identity: {
+    id: 'identity',
+    label: 'Identity (default)',
+    description: 'Leaves the new object untouched before it is placed into the scope.',
+    apply: ({ node }) => node,
+  },
+  'annotate-with-scope': {
+    id: 'annotate-with-scope',
+    label: 'Annotate with scope',
+    description: 'Stamps the scope label onto the object metadata and records when it was added.',
+    apply: ({ node, scope }) => {
+      if (!isExpressionMetadata(node.metadata)) {
+        return node;
+      }
+      const timestamp = new Date().toISOString();
+      return {
+        ...node,
+        metadata: {
+          ...node.metadata,
+          label: `${node.metadata.label} @ ${scope.label}`,
+          scopeContext: scope.label,
+          evaluatedAt: timestamp,
+        },
+      };
+    },
+  },
+};
+
+const SCOPE_EVAL_FUNCTION_OPTIONS = Object.values(SCOPE_EVAL_FUNCTIONS);
+
+const runScopeEvalFunction = (scope: ScopeMetadata, node: DirectoryNode): DirectoryNode => {
+  const evaluator =
+    SCOPE_EVAL_FUNCTIONS[scope.evalFunction ?? DEFAULT_SCOPE_EVAL_FUNCTION] ??
+    SCOPE_EVAL_FUNCTIONS[DEFAULT_SCOPE_EVAL_FUNCTION];
+  return evaluator.apply({ node, scope });
+};
 
 const gatherExpressionEntries = (fields: ExpressionField[]): DirectoryEntry[] =>
   fields
@@ -244,24 +299,6 @@ const createInitialWorkspace = (): MerkleStore => {
   ];
 
   (budgetScope.metadata as ScopeMetadata).allowedTypes = ['Budget', 'Variable', 'HoTT Equality', 'Pi'];
-  (budgetScope.metadata as ScopeMetadata).taskForms = [
-    {
-      id: 'budget-deposit',
-      label: 'Deposit funds',
-      action: 'deposit',
-      resourceType: 'Budget',
-      description: 'Increase the available budget in this scope.',
-      expressionType: 'Pi',
-    },
-    {
-      id: 'budget-withdraw',
-      label: 'Spend funds',
-      action: 'withdraw',
-      resourceType: 'Budget',
-      description: 'Use budget for a task or allocation.',
-      expressionType: 'Pi',
-    },
-  ];
   (budgetScope.metadata as ScopeMetadata).variables = [
     {
       id: `var-${createNodeId()}`,
@@ -275,10 +312,39 @@ const createInitialWorkspace = (): MerkleStore => {
   (calendarScope.metadata as ScopeMetadata).allowedTypes = ['Time', 'Variable'];
   (calendarScope.metadata as ScopeMetadata).variables = [];
 
+  const depositFunction = createExpressionNode('Deposit Budget', 'Pi');
+  depositFunction.metadata = {
+    ...depositFunction.metadata,
+    signature: {
+      label: 'Deposit Budget',
+      description: 'Increases the available budget in a scope.',
+      action: 'deposit',
+      parameters: [
+        { name: 'budget', type: 'Budget', role: 'resource' },
+        { name: 'amount', type: 'Number', role: 'value' },
+      ],
+    },
+  };
+  const withdrawFunction = createExpressionNode('Spend Budget', 'Pi');
+  withdrawFunction.metadata = {
+    ...withdrawFunction.metadata,
+    signature: {
+      label: 'Spend Budget',
+      description: 'Spends funds from a scope budget.',
+      action: 'withdraw',
+      parameters: [
+        { name: 'budget', type: 'Budget', role: 'resource' },
+        { name: 'amount', type: 'Number', role: 'value' },
+      ],
+    },
+  };
+
   root.entries = [
     { name: 'Todo Workflow', ref: { kind: 'node', targetId: workflowScope.id } },
     { name: 'My Budget', ref: { kind: 'node', targetId: budgetScope.id } },
     { name: 'My Calendar', ref: { kind: 'node', targetId: calendarScope.id } },
+    { name: 'Deposit Budget', ref: { kind: 'node', targetId: depositFunction.id } },
+    { name: 'Spend Budget', ref: { kind: 'node', targetId: withdrawFunction.id } },
   ];
 
   return {
@@ -289,9 +355,22 @@ const createInitialWorkspace = (): MerkleStore => {
       [budgetScope.id]: budgetScope,
       [calendarScope.id]: calendarScope,
       [todoExpression.id]: todoExpression,
+      [depositFunction.id]: depositFunction,
+      [withdrawFunction.id]: withdrawFunction,
     },
   };
 };
+
+const cloneScopeMetadata = (metadata: ScopeMetadata): ScopeMetadata => ({
+  nodeKind: 'scope',
+  label: metadata.label,
+  allowedTypes: metadata.allowedTypes ? [...metadata.allowedTypes] : undefined,
+  evalFunction: metadata.evalFunction ?? DEFAULT_SCOPE_EVAL_FUNCTION,
+  variables: metadata.variables.map(variable => ({
+    ...variable,
+    resource: variable.resource ? { ...variable.resource } : undefined,
+  })),
+});
 
 const findScopedVariables = (nodes: MerkleStore['nodes'], crumbs: ReadonlyArray<{ nodeId: ContentId; label: string }>): ScopedVariableInfo[] => {
   const scoped: ScopedVariableInfo[] = [];
@@ -354,6 +433,10 @@ const addExpressionEntryToScope = (
     ...expressionNode.metadata,
     ...(options?.extraMetadata ?? {}),
   };
+  const evaluatedNode = {
+    ...runScopeEvalFunction(scopeNode.metadata, expressionNode),
+    id: expressionNode.id,
+  };
   const entryName = sanitizeEntryName(scopeNode.entries, label);
   const updatedScope: DirectoryNode = {
     ...scopeNode,
@@ -365,7 +448,7 @@ const addExpressionEntryToScope = (
   return {
     ...nodes,
     [scopeId]: updatedScope,
-    [expressionNode.id]: expressionNode,
+    [expressionNode.id]: evaluatedNode,
   };
 };
 
@@ -512,6 +595,9 @@ const FosScopeBuilder = ({
   const directoryNode = isDirectory(activeNode) ? activeNode : null;
   const scopeMetadata = directoryNode && isScopeMetadata(directoryNode.metadata) ? directoryNode.metadata : null;
   const expressionMetadata = directoryNode && isExpressionMetadata(directoryNode.metadata) ? directoryNode.metadata : null;
+  const activeScopeEvalFunctionId = scopeMetadata?.evalFunction ?? DEFAULT_SCOPE_EVAL_FUNCTION;
+  const activeScopeEvalDescriptor =
+    SCOPE_EVAL_FUNCTIONS[activeScopeEvalFunctionId] ?? SCOPE_EVAL_FUNCTIONS[DEFAULT_SCOPE_EVAL_FUNCTION];
 
   const scopedVariables = useMemo(
     () => findScopedVariables(store.nodes, resolved.crumbs),
@@ -535,7 +621,6 @@ const FosScopeBuilder = ({
     left: '',
     right: '',
   });
-  const [taskFormState, setTaskFormState] = useState<Record<string, { amount: string; memo: string }>>({});
 
   const availableTypeOptions = useMemo(() => {
     const seen = new Set<string>();
@@ -638,6 +723,84 @@ const FosScopeBuilder = ({
     });
   }, [directoryNode, selectedTypeName, store.nodes]);
 
+  const primaryScopeType = useMemo(() => {
+    const allowed = scopeMetadata?.allowedTypes ?? [];
+    const nonSpecial = allowed.find(
+      type => !['Variable', 'Type', 'HoTT Equality', 'Pi', 'Sigma'].includes(type),
+    );
+    return nonSpecial ?? allowed[0] ?? null;
+  }, [scopeMetadata?.allowedTypes]);
+
+  const [functionActionState, setFunctionActionState] = useState<Record<string, Record<string, string>>>({});
+
+  const describeTypeOptional = useCallback(
+    (typeName: string) => {
+      try {
+        return describeType(typeName);
+      } catch {
+        return null;
+      }
+    },
+    [describeType],
+  );
+
+  const isSubtypeOf = useCallback(
+    (childType: string, parentType: string) => {
+      if (childType === parentType) return true;
+      try {
+        let descriptor = describeType(childType);
+        const visited = new Set<string>();
+        while (descriptor?.observes && !visited.has(descriptor.observes)) {
+          if (descriptor.observes === parentType) return true;
+          visited.add(descriptor.observes);
+          descriptor = describeType(descriptor.observes);
+        }
+      } catch {
+        return false;
+      }
+      return false;
+    },
+    [describeType],
+  );
+
+  const scopeFunctionActions = useMemo(() => {
+    if (!primaryScopeType || !scopeMetadata) return [];
+    const resourceVariable = scopeMetadata.variables.find(variable => getVariableAssignedType(variable) === primaryScopeType);
+    if (!resourceVariable) return [];
+    const actions: Array<{
+      nodeId: ContentId;
+      metadata: ExpressionMetadata;
+      label: string;
+      parameters: FunctionParameter[];
+      firstParamDescriptor: StructTypeDescriptor | null;
+      resourceVariable: ScopeVariable;
+    }> = [];
+    resolved.crumbs.forEach(crumb => {
+      const node = store.nodes[crumb.nodeId];
+      if (!isDirectory(node)) return;
+      (node.entries ?? []).forEach(entry => {
+        if (entry.ref.kind !== 'node') return;
+        const target = store.nodes[entry.ref.targetId];
+        if (!isDirectory(target) || !isExpressionMetadata(target.metadata)) return;
+        if (target.metadata.typeName !== 'Pi') return;
+        const signature = target.metadata.signature;
+        if (!signature || !signature.parameters || signature.parameters.length === 0) return;
+        const firstParam = signature.parameters[0];
+        if (!isSubtypeOf(primaryScopeType, firstParam.type)) return;
+        const descriptor = describeTypeOptional(firstParam.type);
+        actions.push({
+          nodeId: entry.ref.targetId as ContentId,
+          metadata: target.metadata,
+          label: signature.label ?? entry.name,
+          parameters: signature.parameters,
+          firstParamDescriptor: descriptor,
+          resourceVariable,
+        });
+      });
+    });
+    return actions;
+  }, [describeTypeOptional, isSubtypeOf, primaryScopeType, resolved.crumbs, scopeMetadata, store.nodes]);
+
   const handleCrumbClick = (index: number) => {
     setPath(prev => prev.slice(0, index));
   };
@@ -662,6 +825,30 @@ const FosScopeBuilder = ({
       goToNode(targetScopeId);
     },
     [goToNode],
+  );
+
+  const handleScopeEvalChange = useCallback(
+    (nextFunctionId: ScopeEvalFunctionId) => {
+      if (!directoryNode) return;
+      setStore(prev => {
+        const node = prev.nodes[directoryNode.id];
+        if (!isDirectory(node) || !isScopeMetadata(node.metadata)) return prev;
+        const currentId = node.metadata.evalFunction ?? DEFAULT_SCOPE_EVAL_FUNCTION;
+        if (currentId === nextFunctionId) {
+          return prev;
+        }
+        const metadata = cloneScopeMetadata(node.metadata);
+        metadata.evalFunction = nextFunctionId;
+        return {
+          ...prev,
+          nodes: {
+            ...prev.nodes,
+            [directoryNode.id]: { ...node, metadata },
+          },
+        };
+      });
+    },
+    [directoryNode, setStore],
   );
 
   const addExpressionInCurrentScope = useCallback(
@@ -689,65 +876,67 @@ const FosScopeBuilder = ({
     [directoryNode],
   );
 
-  const handleTaskFormSubmit = useCallback(
-    (task: TaskFormDefinition) => {
-      if (!directoryNode || !scopeMetadata) return;
-      const formState = taskFormState[task.id] ?? { amount: '', memo: '' };
-      const amount = Number(formState.amount);
-      if (!Number.isFinite(amount) || amount <= 0) {
+  const handleFunctionExecute = useCallback(
+    (
+      action: {
+        nodeId: ContentId;
+        metadata: ExpressionMetadata;
+        label: string;
+        parameters: FunctionParameter[];
+        resourceVariable: ScopeVariable;
+      },
+      parameters: Record<string, string>,
+    ) => {
+      if (!scopeMetadata) return;
+      const signature = action.metadata.signature;
+      const resourceVariable = action.resourceVariable;
+      if (!resourceVariable.resource) return;
+      const amountParam = signature?.parameters?.find(param => param.type === 'Number' && param.role !== 'resource');
+      const amountValue = amountParam ? Number(parameters[amountParam.name]) : NaN;
+      if (!Number.isFinite(amountValue) || amountValue <= 0) {
         return;
       }
-
-      addExpressionInCurrentScope(task.expressionType ?? 'Pi', {
-        label: `${task.label} (${amount})`,
+      const actionKind = signature?.action;
+      addExpressionInCurrentScope('Pi', {
+        label: `${action.label} invocation`,
         extraMetadata: {
-          action: task.action,
-          resourceType: task.resourceType,
-          amount,
-          memo: formState.memo,
+          invokedFunction: action.label,
+          functionNode: action.nodeId,
+          parameters,
           timestamp: new Date().toISOString(),
           scope: scopeMetadata.label,
         },
       });
-
       setStore(prev => {
-        const node = prev.nodes[directoryNode.id];
-        if (!isDirectory(node) || !isScopeMetadata(node.metadata)) {
-          return prev;
-        }
-        const metadata: ScopeMetadata = {
-          ...node.metadata,
-          variables: node.metadata.variables.map(variable => ({ ...variable, resource: variable.resource ? { ...variable.resource } : undefined })),
-        };
-        const target = metadata.variables.find(variable => getVariableAssignedType(variable) === task.resourceType);
-        if (!target || !target.resource) {
-          return prev;
-        }
+        const node = prev.nodes[directoryNode!.id];
+        if (!isDirectory(node) || !isScopeMetadata(node.metadata)) return prev;
+        const metadata = cloneScopeMetadata(node.metadata);
+        const target = metadata.variables.find((variable: ScopeVariable) => variable.id === resourceVariable.id);
+        if (!target || !target.resource) return prev;
         const nextResource = { ...target.resource };
-        if (task.action === 'deposit') {
-          nextResource.quantity += amount;
-        } else if (task.action === 'withdraw') {
-          if (nextResource.quantity < amount) {
+        if (actionKind === 'withdraw') {
+          if (nextResource.quantity < amountValue) {
             return prev;
           }
-          nextResource.quantity -= amount;
+          nextResource.quantity -= amountValue;
+        } else {
+          nextResource.quantity += amountValue;
         }
         target.resource = nextResource;
         return {
           ...prev,
           nodes: {
             ...prev.nodes,
-            [directoryNode.id]: { ...node, metadata },
+            [directoryNode!.id]: { ...node, metadata },
           },
         };
       });
-
-      setTaskFormState(current => ({
-        ...current,
-        [task.id]: { amount: '', memo: '' },
-      }));
+        setFunctionActionState(current => ({
+          ...current,
+          [action.nodeId]: {},
+        }));
     },
-    [addExpressionInCurrentScope, directoryNode, scopeMetadata, setStore, taskFormState],
+    [addExpressionInCurrentScope, directoryNode, scopeMetadata, setStore],
   );
 
   const contextVariables = scopedVariables.filter(variable => variable.scopeId !== directoryNode?.id);
@@ -1291,6 +1480,24 @@ const FosScopeBuilder = ({
                   <h3 className="text-xl font-semibold">{scopeMetadata.label}</h3>
                 </div>
               </div>
+              <div className="mb-6 text-xs text-white">
+                <label className="text-[10px] uppercase tracking-[0.3em] text-foreground/50" htmlFor="scope-eval-selector">
+                  Eval function
+                </label>
+                <select
+                  id="scope-eval-selector"
+                  value={activeScopeEvalFunctionId}
+                  onChange={event => handleScopeEvalChange(event.target.value as ScopeEvalFunctionId)}
+                  className="mt-2 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
+                >
+                  {SCOPE_EVAL_FUNCTION_OPTIONS.map(option => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-2 text-foreground/60">{activeScopeEvalDescriptor.description}</p>
+              </div>
 
       <section>
         <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">Variables</p>
@@ -1320,74 +1527,86 @@ const FosScopeBuilder = ({
         </div>
       </section>
 
-      {scopeMetadata?.taskForms && scopeMetadata.taskForms.length > 0 && (
+      {scopeFunctionActions.length > 0 && (
         <section className="mt-4">
           <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">Actions</p>
           <div className="mt-2 space-y-3 text-sm">
-            {scopeMetadata.taskForms.map(task => {
-              const targetVariable =
-                scopeMetadata.variables.find(variable => getVariableAssignedType(variable) === task.resourceType) ?? null;
-              const formState = taskFormState[task.id] ?? { amount: '', memo: '' };
-              const disabled = !targetVariable?.resource;
+            {scopeFunctionActions.map(action => {
+              const signature = action.metadata.signature;
+              const parameterInputs = action.parameters.slice(1);
+              const actionState = functionActionState[action.nodeId] ?? {};
+              const disabled = parameterInputs.some(param => !actionState[param.name]?.trim());
               return (
                 <form
-                  key={task.id}
+                  key={action.nodeId}
                   className="rounded-2xl border border-white/10 bg-white/5 p-3"
                   onSubmit={event => {
                     event.preventDefault();
                     if (!disabled) {
-                      handleTaskFormSubmit(task);
+                      handleFunctionExecute(action, actionState);
                     }
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-white">{task.label}</p>
-                      {task.description && <p className="text-xs text-foreground/60">{task.description}</p>}
+                      <p className="font-semibold text-white">{signature?.label ?? action.label}</p>
+                      {signature?.description && <p className="text-xs text-foreground/60">{signature.description}</p>}
                     </div>
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-foreground/60">
-                      {task.action}
-                    </span>
+                    {signature?.action && (
+                      <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-foreground/60">
+                        {signature.action}
+                      </span>
+                    )}
                   </div>
+                  {action.firstParamDescriptor && (
+                    <div className="mt-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-xs text-foreground/70">
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-foreground/50">Input structure</p>
+                      {action.firstParamDescriptor.fields.map(field => {
+                        const resolved = resolveType(field.type, {});
+                        const typeLabel =
+                          resolved.kind === 'scalar'
+                            ? resolved.base
+                            : resolved.kind === 'literal'
+                              ? JSON.stringify(resolved.value)
+                              : field.type instanceof Function
+                                ? 'Derived'
+                                : 'Value';
+                        return (
+                          <div key={field.name} className="flex items-center justify-between border-b border-white/5 py-1 last:border-b-0">
+                            <span>{field.label ?? field.name}</span>
+                            <span className="text-foreground/50">{typeLabel}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                   <div className="mt-2 grid gap-2 md:grid-cols-2">
-                    <input
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      value={formState.amount}
-                      onChange={event =>
-                        setTaskFormState(current => ({
-                          ...current,
-                          [task.id]: { amount: event.target.value, memo: current[task.id]?.memo ?? '' },
-                        }))
-                      }
-                      placeholder="Amount"
-                      className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-foreground/40 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50"
-                      disabled={disabled}
-                    />
-                    <input
-                      value={formState.memo}
-                      onChange={event =>
-                        setTaskFormState(current => ({
-                          ...current,
-                          [task.id]: { amount: current[task.id]?.amount ?? '', memo: event.target.value },
-                        }))
-                      }
-                      placeholder="Memo (optional)"
-                      className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-foreground/40 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50"
-                      disabled={disabled}
-                    />
+                    {parameterInputs.map(param => (
+                      <input
+                        key={param.name}
+                        value={actionState[param.name] ?? ''}
+                        onChange={event =>
+                          setFunctionActionState(current => ({
+                            ...current,
+                            [action.nodeId]: {
+                              ...current[action.nodeId],
+                              [param.name]: event.target.value,
+                            },
+                          }))
+                        }
+                        placeholder={`${param.name} (${param.type})`}
+                        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-foreground/40 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
+                      />
+                    ))}
+                    {parameterInputs.length === 0 && <p className="text-xs text-foreground/60">No additional inputs required.</p>}
                   </div>
                   <button
                     type="submit"
-                    disabled={disabled}
+                    disabled={parameterInputs.length > 0 && disabled}
                     className="mt-3 w-full rounded-xl bg-emerald-500/80 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-emerald-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Execute
                   </button>
-                  {disabled && (
-                    <p className="mt-1 text-[10px] text-foreground/60">No {task.resourceType} resource available in this scope.</p>
-                  )}
                 </form>
               );
             })}

@@ -812,6 +812,16 @@ export const FosWrapperComponent = () => {
           <FieldNode name="toSlug" label="To Todo" type={scalar('String')} />
           <FieldNode name="witness" label="Witness" type={scalar('String', true)} input="textarea" />
         </TypeNode>
+        <TypeNode name="Budget" label="Budget" predicate="budget" identity="id" form="sigma" modality="cartesian">
+          <FieldNode name="id" label="Budget ID" type={scalar('String')} />
+          <FieldNode name="label" label="Label" type={scalar('String')} />
+          <FieldNode name="balance" label="Balance" type={scalar('Number')} />
+        </TypeNode>
+        <TypeNode name="Time" label="Calendar" predicate="calendar" identity="id" form="sigma" modality="cartesian">
+          <FieldNode name="id" label="Calendar ID" type={scalar('String')} />
+          <FieldNode name="label" label="Label" type={scalar('String')} />
+          <FieldNode name="hours" label="Available Hours" type={scalar('Number')} />
+        </TypeNode>
         <HoleNode
           name="createTodo"
           description="Captures new todo tasks when the dependent hole is filled."
