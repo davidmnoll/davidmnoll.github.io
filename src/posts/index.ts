@@ -1,4 +1,5 @@
 import Boids, { meta as boidsMeta } from './boids';
+import QRTCP, { meta as qrtcpMeta } from './qrtcp';
 import { getMarkdownPostPage } from './PostPage';
 import { generatedPosts } from './generated-posts';
 
@@ -27,6 +28,7 @@ const markdownPosts: Post[] = generatedPosts.map(post => ({
 export const posts: Post[] = [
   ...markdownPosts,
   { slug: 'boids', meta: boidsMeta, component: Boids },
+  { slug: 'qrtcp', meta: qrtcpMeta, component: QRTCP },
 ];
 
 // Keep the async function for backwards compatibility if needed

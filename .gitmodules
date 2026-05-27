@@ -1,0 +1,3 @@
+[submodule "src/lib/qrmesh"]
+	path = src/lib/qrmesh
+	url = git@github.com:syc-tech/qrmesh.git
