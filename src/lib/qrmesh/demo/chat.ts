@@ -1064,15 +1064,6 @@ export class QRMeshChatElement extends HTMLElement {
     });
   }
 
-  private _manualConnect(peerId: string) {
-    if (!this.mesh) return;
-    // Create a fake beacon packet to discover the peer
-    const fakeBeacon = { t: 'B' as const, src: peerId, dst: '*', pn: 0, v: 3 };
-    this.mesh.processBeacon(fakeBeacon as any);
-    this.activePeerId = peerId;
-    this.updatePeerBadge(peerId, 'discovered');
-    this.updateStatus('Connected to ' + peerId, 'connected');
-  }
 }
 
 export function registerQRMeshChatElement(tagName: string = 'qrmesh-chat') {

@@ -5,7 +5,7 @@ import remarkMath from 'remark-math'
 import rehypeMermaid from 'rehype-mermaid'
 import rehypeRaw from 'rehype-raw'
 import rehypeKatex from 'rehype-katex'
-
+import Giscus from '@giscus/react';
 
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
@@ -33,6 +33,22 @@ export const getMarkdownPostPage = ({ frontMatter, content }: {
       >
         {content}
       </ReactMarkdown>
+    </div>
+    <div className="mt-12 pt-8 border-t border-border/40">
+      <Giscus
+        repo="davidmnoll/davidmnoll.github.io"
+        repoId="MDEwOlJlcG9zaXRvcnkzNzE5MDEwMTI="
+        category="General"
+        categoryId="DIC_kwDOFirCVM4C97qh"
+        mapping="pathname"
+        strict="0"
+        reactionsEnabled="1"
+        emitMetadata="0"
+        inputPosition="top"
+        theme="transparent_dark"
+        lang="en"
+        loading="lazy"
+      />
     </div>
   </PostPage>)
 
