@@ -1064,7 +1064,7 @@ export class QRMeshChatElement extends HTMLElement {
     });
   }
 
-  private manualConnect(peerId: string) {
+  private _manualConnect(peerId: string) {
     if (!this.mesh) return;
     // Create a fake beacon packet to discover the peer
     const fakeBeacon = { t: 'B' as const, src: peerId, dst: '*', pn: 0, v: 3 };

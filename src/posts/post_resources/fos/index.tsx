@@ -778,7 +778,7 @@ const useFosRuntime = (definition: ProgramDefinition) => {
   return runtime;
 };
 
-export const FosWrapperComponent = () => {
+export const FosWrapperComponent = (): React.ReactElement => {
   const programAst = useMemo(
     () => (
       <ProgramNode name="TodoRuntime">
