@@ -1,5 +1,6 @@
 import Boids, { meta as boidsMeta } from './boids';
 import QRTCP, { meta as qrtcpMeta } from './qrtcp';
+import CoinductiveLang, { meta as coinductiveLangMeta } from './coinductiveLang';
 import { getMarkdownPostPage } from './PostPage';
 import { generatedPosts } from './generated-posts';
 
@@ -29,6 +30,7 @@ export const posts: Post[] = [
   ...markdownPosts,
   { slug: 'boids', meta: boidsMeta, component: Boids },
   { slug: 'qrtcp', meta: qrtcpMeta, component: QRTCP },
+  { slug: 'coinductiveLang', meta: coinductiveLangMeta, component: CoinductiveLang },
 ];
 
 // Keep the async function for backwards compatibility if needed
