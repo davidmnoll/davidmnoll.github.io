@@ -5,9 +5,10 @@ import { CoinductiveLangDemo } from './post_resources/coinductiveLang';
 export const meta = {
   title: 'A Toy Coinductive Language',
   summary:
-    'An interactive demo of a small language for working with infinite streams using coinduction.',
+    'An vibe-coded stub of a small language for working with infinite streams.',
   image: '/blog-images/coinductiveLang.svg',
   date: '2026-06-03',
+  draft: true
 };
 
 export default function CoinductiveLang() {

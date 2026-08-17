@@ -8,6 +8,7 @@ export const meta = {
     'A demo of mesh peer discovery using QR codes as the physical layer. Point two devices at each other and watch them establish encrypted connections using TCP-like handshakes.',
   image: '/blog-images/qrtcp-thumb.svg',
   date: '2026-01-10',
+  draft: true
 };
 
 export default function QRTCP() {

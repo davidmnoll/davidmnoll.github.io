@@ -6,7 +6,7 @@ import thumb from '@/assets/boids-thumb.svg';
 export const meta = {
   title: 'Boids Simulation',
   summary:
-    'A simple visual experiment showing how flocks of birds can emerge from three basic steering behaviours.',
+    'A vibe-coded placeholder for a future experiment where I want to try create a boids-based programming language.',
   image: thumb,
   date: '2025-08-12',
 };

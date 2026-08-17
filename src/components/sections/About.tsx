@@ -94,7 +94,8 @@ export default function Home() {
         I am a software engineer with recent work prototyping and exploring AI applications.  I have full stack and devops experience and have led engineering developments in startup environments.
         <br />
         <br />
-        With a background in cognitive science with a focus on linguistics, I have always had a passion for understanding cognition.  It's been very interesting to see the developments of LLMs.  It's fascinating to try to understand why they work so well and explore their capabilities.
+        {/* Following certain problems deep down the rabbit hole has led me to dig into a wide variety of topics but from a targeted perspective.  Information theory, category theory, thermodynamics */}
+        {/* With a background in cognitive science with a focus on linguistics, I have always had a passion for understanding cognition.  It's been very interesting to see the developments of LLMs.  It's fascinating to try to understand why they work so well and explore their capabilities. */}
         {/* My experience lies mostly in full stack development for web applications.  I have begun documenting some of my learning of other realms of software development <a href="https://davidmnoll.substack.com/" className='underline'>here</a>. */}
         <br />
         {/* <br />

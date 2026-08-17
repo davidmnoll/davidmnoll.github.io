@@ -28,9 +28,9 @@ const markdownPosts: Post[] = generatedPosts.map(post => ({
 // Export posts as a static array
 export const posts: Post[] = [
   ...markdownPosts,
-  { slug: 'boids', meta: boidsMeta, component: Boids },
-  { slug: 'qrtcp', meta: qrtcpMeta, component: QRTCP },
-  { slug: 'coinductiveLang', meta: coinductiveLangMeta, component: CoinductiveLang },
+  // { slug: 'boids', meta: boidsMeta, component: Boids },
+  // { slug: 'qrtcp', meta: qrtcpMeta, component: QRTCP },
+  // { slug: 'coinductiveLang', meta: coinductiveLangMeta, component: CoinductiveLang },
 ];
 
 // Keep the async function for backwards compatibility if needed
