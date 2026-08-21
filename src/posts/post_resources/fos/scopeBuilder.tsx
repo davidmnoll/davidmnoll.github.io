@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ContentId, DirectoryEntry, DirectoryNode, MerkleNode, MerkleStore } from '@/components/ui/merkleNavigator';
-import { MerkleNavigator } from '@/components/ui/merkleNavigator';
+import type { ContentId, DirectoryEntry, DirectoryNode, MerkleNode, MerkleStore } from '@/lib/merkle-nav';
+import { MerkleNavigator } from '@/lib/merkle-nav';
 import type { FieldDescriptor, HoleDescriptor, LinearResourceState, StructTypeDescriptor } from './types';
 import { resolveType } from './types';
 

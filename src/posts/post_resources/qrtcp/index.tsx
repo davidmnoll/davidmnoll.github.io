@@ -2,11 +2,11 @@
  * QR-TCP Demo Post Component
  *
  * This is a thin wrapper that renders the Web Component.
- * The Web Component is framework-agnostic and defined in @/lib/qrmesh.
+ * The Web Component is framework-agnostic and defined in @/lib/omnimesh.
  */
 
 import { useEffect, useRef } from 'react';
-import { registerQRTCPElement } from '@/lib/qrmesh';
+import { registerQRTCPElement } from '@/lib/omnimesh';
 
 // Ensure the web component is registered
 registerQRTCPElement();

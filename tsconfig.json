@@ -27,5 +27,6 @@
     }
   },
   "include": ["src"],
+  "exclude": ["src/lib/omnimesh/demo", "src/lib/omnimesh/docs", "src/lib/omnimesh/node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,6 +1,6 @@
-import Boids, { meta as boidsMeta } from './boids';
-import QRTCP, { meta as qrtcpMeta } from './qrtcp';
-import CoinductiveLang, { meta as coinductiveLangMeta } from './coinductiveLang';
+// import Boids, { meta as boidsMeta } from './boids';
+// import QRTCP, { meta as qrtcpMeta } from './qrtcp';
+// import CoinductiveLang, { meta as coinductiveLangMeta } from './coinductiveLang';
 import { getMarkdownPostPage } from './PostPage';
 import { generatedPosts } from './generated-posts';
 
