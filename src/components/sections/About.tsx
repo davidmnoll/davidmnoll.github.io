@@ -139,7 +139,7 @@ export default function Home() {
             <span style={{
               fontSize: '1rem',
               display: 'inline-block',
-            }}><a href="https://github.com/davidmnoll/netcode">Robo1:</a></span> a web dashboard for tele-operating a robot
+            }}><a href="https://github.com/davidmnoll/robo1">Robo1:</a></span> a web dashboard for tele-operating a robot
           </div>
 
           <div style={{
