@@ -1,6 +1,6 @@
-[submodule "src/lib/merkle-nav"]
-	path = src/lib/merkle-nav
-	url = https://github.com/syc-tech/merkle-nav.git
+[submodule "src/lib/dag-navvit"]
+	path = src/lib/dag-navvit
+	url = https://github.com/syc-tech/dag-navvit.git
 [submodule "src/lib/omnimesh"]
 	path = src/lib/omnimesh
 	url = https://github.com/syc-tech/omnimesh.git

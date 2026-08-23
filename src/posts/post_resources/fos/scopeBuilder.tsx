@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ContentId, DirectoryEntry, DirectoryNode, MerkleNode, MerkleStore } from '@/lib/merkle-nav';
-import { MerkleNavigator } from '@/lib/merkle-nav';
+import type { ContentId, DirectoryEntry, DirectoryNode, DagNode, DagStore } from '@/lib/dag-navvit';
+import { DagNavigator } from '@/lib/dag-navvit';
 import type { FieldDescriptor, HoleDescriptor, LinearResourceState, StructTypeDescriptor } from './types';
 import { resolveType } from './types';
 
@@ -124,7 +124,7 @@ const createExpressionNode = (label: string, typeName: string, fields: Expressio
   } satisfies ExpressionMetadata,
 });
 
-const isDirectory = (node: MerkleNode | undefined): node is DirectoryNode => node?.kind === 'directory';
+const isDirectory = (node: DagNode | undefined): node is DirectoryNode => node?.kind === 'directory';
 
 const isScopeMetadata = (metadata: DirectoryNode['metadata']): metadata is ScopeMetadata =>
   Boolean(metadata && (metadata as ScopeMetadata).nodeKind === 'scope');
@@ -209,7 +209,7 @@ const sanitizeEntryName = (entries: ReadonlyArray<DirectoryEntry>, baseName: str
   return candidate;
 };
 
-const createInitialWorkspace = (): MerkleStore => {
+const createInitialWorkspace = (): DagStore => {
   const root = createScopeNode('Root Scope');
   const workflowScope = createScopeNode('Todo Workflow');
   const budgetScope = createScopeNode('My Budget');
@@ -372,7 +372,7 @@ const cloneScopeMetadata = (metadata: ScopeMetadata): ScopeMetadata => ({
   })),
 });
 
-const findScopedVariables = (nodes: MerkleStore['nodes'], crumbs: ReadonlyArray<{ nodeId: ContentId; label: string }>): ScopedVariableInfo[] => {
+const findScopedVariables = (nodes: DagStore['nodes'], crumbs: ReadonlyArray<{ nodeId: ContentId; label: string }>): ScopedVariableInfo[] => {
   const scoped: ScopedVariableInfo[] = [];
   crumbs.forEach(crumb => {
     const node = nodes[crumb.nodeId];
@@ -394,7 +394,7 @@ const findScopedVariables = (nodes: MerkleStore['nodes'], crumbs: ReadonlyArray<
 };
 
 const findPathToNode = (
-  nodes: Record<ContentId, MerkleNode>,
+  nodes: Record<ContentId, DagNode>,
   currentId: ContentId,
   targetId: ContentId,
   path: string[],
@@ -418,7 +418,7 @@ const findPathToNode = (
 };
 
 const addExpressionEntryToScope = (
-  nodes: Record<ContentId, MerkleNode>,
+  nodes: Record<ContentId, DagNode>,
   scopeId: ContentId,
   label: string,
   typeName: string,
@@ -586,10 +586,10 @@ const FosScopeBuilder = ({
   callEndpoint,
   getLinearResources,
 }: FosScopeBuilderProps) => {
-  const [store, setStore] = useState<MerkleStore>(() => createInitialWorkspace());
+  const [store, setStore] = useState<DagStore>(() => createInitialWorkspace());
   const [path, setPath] = useState<string[]>([]);
 
-  const navigator = useMemo(() => new MerkleNavigator(store), [store]);
+  const navigator = useMemo(() => new DagNavigator(store), [store]);
   const resolved = useMemo(() => navigator.resolvePath(path), [navigator, path]);
   const activeNode = resolved.activeNode;
   const directoryNode = isDirectory(activeNode) ? activeNode : null;
