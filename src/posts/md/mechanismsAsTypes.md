@@ -16,22 +16,12 @@ First, let's start with some very simple systems to get our bearings.  For the s
 
 In this system we have 1 or potentially 2 significant inputs: the torque we put into the shaft on its long axis, and the translation force we apply parallel to that axis.  Acc
 
-We can certainly cause many other inputs to the system.  According to the [Chebychev–Grübler–Kutzbach criterion](https://en.wikipedia.org/wiki/Chebychev%E2%80%93Gr%C3%BCbler%E2%80%93Kutzbach_criterion) we start with 3 translational and 3 rotational degrees of freedom of each object relative to one another.  We can apply a force perpendicular to the long axis of the shaft, but since we've added the 2nd bearing, this is unlikely to cause an effect on the shaft unless it's a large enough force.  We can raise the temperature of one side of the rod.  However, for the purposes of a simpler model we can ignore these factors.  
+We can certainly cause many other inputs to the system.  According to the [Chebychev–Grübler–Kutzbach criterion](https://en.wikipedia.org/wiki/Chebychev%E2%80%93Gr%C3%BCbler%E2%80%93Kutzbach_criterion) we start with 3 translational and 3 rotational degrees of freedom of each object relative to one another.  We can apply a force perpendicular to the long axis of the shaft, but since we've added the 2nd bearing, this is unlikely to cause an effect on the shaft unless it's a large enough force.  We can raise the temperature of one side of the rod.  However, for the purposes of a simpler model we can try to ignore some of these factors.  
 
-Let's make a very naive rough attempt a language that models this: 
-
-```
-def axle(rotIn, transIn) -> rotOut, transOut: 
-    pass
-
-def bearing1(position) -> ?: 
-    pass
-
-def bearing2(position) -> ?: 
-    pass
-```
+Now let's think about couplings.  This is how mechanisms compose with each other.  We know that couplings tend to require the objects on either side to be located in a certain spot.  Gears which aren't enmeshed don't transmit force.  There are many details to this we can 
 
 It's not immediately obvious how the bearings are supposed to interact with the axle.  We do know it constrains some of its degrees of freedom.  If we assume that the axle's long axis is aligned to the z axis, we remove x and  y translation and rotation.  
+
 
 
 
